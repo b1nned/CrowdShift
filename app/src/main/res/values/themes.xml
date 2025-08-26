@@ -92,9 +92,26 @@
         <item name="contentPadding">16dp</item>
     </style>
 
+    <!-- Magical Letter Style for Individual Animation -->
+    <style name="MagicalLetter">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">2dp</item>
+        <item name="android:elevation">8dp</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:shadowColor">#60000000</item>
+        <item name="android:shadowDx">3</item>
+        <item name="android:shadowDy">5</item>
+        <item name="android:shadowRadius">10</item>
+        <item name="android:textColor">#0f6635</item>
+        <item name="android:textSize">42sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <!-- Progress Bar Style -->
-    <style name="CrowdShift.ProgressBar" parent="Widget.AppCompat.ProgressBar">
+    <style name="CustomProgressBar" parent="Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateTint">@color/crowdshift_primary</item>
+        <item name="android:indeterminateTintMode">src_in</item>
     </style>
 
 </resources>

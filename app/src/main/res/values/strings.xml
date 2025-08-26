@@ -4,6 +4,7 @@
     <string name="app_name">CROWDSHIFT</string>
     <string name="app_tagline">Less Congestions, More Connections</string>
     <string name="app_version">Version 1.0.0</string>
+    <string name="loading_experience">Crafting your experience…</string>
 
     <!-- Content Descriptions for Accessibility -->
     <string name="accommodation_pin">Accommodation location pin</string>
