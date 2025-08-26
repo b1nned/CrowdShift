@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CrowdShift - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #d9ebe4 0%, #7fc6c5 50%, #1175cd 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pins-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .pin {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px 20px 20px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .pin-red { background-color: #e74c3c; }
+        .pin-green { background-color: #27ae60; }
+        .pin-blue { background-color: #3498db; }
+        .pin-orange { background-color: #f39c12; }
+        .pin-purple { background-color: #9b59b6; }
+        .pin-pink { background-color: #e91e63; }
+
+        .logo-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0f6635;
+            letter-spacing: 2px;
+            margin: 20px 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: #424242;
+            font-weight: 500;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #0f6635;
+            box-shadow: 0 0 0 3px rgba(15, 102, 53, 0.1);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary {
+            background: #0f6635;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0d5429;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 102, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #0f6635;
+            border: 2px solid #0f6635;
+        }
+
+        .btn-secondary:hover {
+            background: #0f6635;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, #27ae60, #299ba1);
+            color: white;
+            border-radius: 25px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .qr-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 36px;
+            }
+
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .pins-row {
+                gap: 12px;
+            }
+
+            .pin {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+        }
+
+        /* Animation for successful login */
+        @keyframes fadeInSuccess {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message {
+            animation: fadeInSuccess 0.5s ease-out;
+            background: #27ae60;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="logo-container">
+    <!-- Top row of pins -->
+    <div class="pins-row">
+        <div class="pin pin-red">🛏️</div>
+        <div class="pin pin-green">📍</div>
+        <div class="pin pin-blue">🚌</div>
+    </div>
+
+    <!-- Bottom row of pins -->
+    <div class="pins-row">
+        <div class="pin pin-red">🛍️</div>
+        <div class="pin pin-blue">🅿️</div>
+        <div class="pin pin-orange">🍽️</div>
+        <div class="pin pin-pink">🔒</div>
+    </div>
+
+    <div class="logo-text">CROWDSHIFT</div>
+    <div class="tagline">Less Congestions, More Connections</div>
+</div>
+
+<div class="login-container">
+    <div id="success-message" class="success-message" style="display: none;"></div>
+
+    <form id="loginForm">
+        <div class="input-group">
+            <input type="text"
+                   id="cardId"
+                   class="input-field"
+                   placeholder="Enter Beep Card ID"
+                   maxlength="16"
+                   autocomplete="off">
+        </div>
+
+        <div class="divider">
+            <span>Or</span>
+        </div>
+
+        <button type="button" id="qrScanBtn" class="btn btn-secondary">
+            <span class="qr-icon">📱</span>
+            Scan QR Code
+        </button>
+
+        <button type="submit" id="submitBtn" class="btn btn-accent">
+            Breathe In
+        </button>
+    </form>
+
+    <div id="loading" class="loading">
+        Processing...
+    </div>
+</div>
+
+<script>
+    // Global functions for Android WebView communication
+    window.handleQRResult = function(qrData) {
+        console.log('QR Result received:', qrData);
+        document.getElementById('cardId').value = qrData;
+        showSuccessMessage('QR Code scanned successfully!');
+
+        // Auto-submit after successful QR scan
+        setTimeout(() => {
+            handleLogin(qrData);
+        }, 1500);
+    };
+
+    window.handleQRCancel = function() {
+        console.log('QR scan cancelled');
+        showMessage('QR scan cancelled', 'warning');
+    };
+
+    function showSuccessMessage(message) {
+        const successEl = document.getElementById('success-message');
+        successEl.textContent = message;
+        successEl.style.display = 'block';
+
+        setTimeout(() => {
+            successEl.style.display = 'none';
+        }, 3000);
+    }
+
+    function showMessage(message, type = 'info') {
+        if (window.Android && window.Android.showToast) {
+            window.Android.showToast(message);
+        } else {
+            alert(message);
+        }
+    }
+
+    function validateCardId(cardId) {
+        // Basic validation for Beep Card ID
+        return cardId && cardId.length >= 8 && /^[a-zA-Z0-9]+$/.test(cardId);
+    }
+
+    function handleLogin(cardId) {
+        if (!validateCardId(cardId)) {
+            showMessage('Please enter a valid Beep Card ID');
+            return false;
+        }
+
+        // Show loading
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('submitBtn').disabled = true;
+
+        // Simulate login process
+        setTimeout(() => {
+            // Here you would normally make an API call
+            // For now, we'll simulate successful login
+            showSuccessMessage('Login successful! Redirecting...');
+
+            // Redirect to dashboard or main app
+            setTimeout(() => {
+                // Replace with your actual dashboard URL
+                window.location.href = 'https://your-crowdshift-domain.com/dashboard';
+            }, 2000);
+
+        }, 1500);
+
+        return true;
+    }
+
+    // Event listeners
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const cardId = document.getElementById('cardId').value.trim();
+        handleLogin(cardId);
+    });
+
+    document.getElementById('qrScanBtn').addEventListener('click', function() {
+        if (window.Android && window.Android.openQRScanner) {
+            window.Android.openQRScanner();
+        } else {
+            showMessage('QR Scanner not available in this environment');
+        }
+    });
+
+    // Auto-format card ID input
+    document.getElementById('cardId').addEventListener('input', function(e) {
+        let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (value.length > 16) {
+            value = value.substring(0, 16);
+        }
+        e.target.value = value;
+    });
+
+    // Enable/disable submit button based on input
+    document.getElementById('cardId').addEventListener('input', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        const isValid = validateCardId(e.target.value);
+        submitBtn.style.opacity = isValid ? '1' : '0.6';
+        submitBtn.disabled = !isValid;
+    });
+
+    console.log('CrowdShift Login Page Loaded');
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Information -->
+    <string name="app_name">CROWDSHIFT</string>
+    <string name="app_tagline">Less Congestions, More Connections</string>
+    <string name="app_version">Version 1.0.0</string>
+
+    <!-- Content Descriptions for Accessibility -->
+    <string name="accommodation_pin">Accommodation location pin</string>
+    <string name="location_pin">General location pin</string>
+    <string name="parking_pin">Parking location pin</string>
+    <string name="transit_pin">Transit location pin</string>
+    <string name="shopping_pin">Shopping location pin</string>
+    <string name="restaurant_pin">Restaurant location pin</string>
+    <string name="security_pin">Security location pin</string>
+
+    <!-- QR Scanner -->
+    <string name="scan_qr_title">Scan QR Code</string>
+    <string name="scan_qr_instructions">Position the QR code within the frame to scan</string>
+    <string name="close_scanner">Close scanner</string>
+    <string name="toggle_flash">Toggle flashlight</string>
+    <string name="qr_help_text">Tap the flash button if you need more light</string>
+    <string name="invalid_qr">Invalid QR Code</string>
+    <string name="qr_scan_success">QR Code scanned successfully!</string>
+
+    <!-- Login Screen -->
+    <string name="enter_beep_card_id">Enter Beep Card ID</string>
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="breathe_in">Breathe In</string>
+    <string name="or_text">Or</string>
+
+    <!-- Main Dashboard -->
+    <string name="city_status">City Status</string>
+    <string name="normal_flow">Normal Flow</string>
+    <string name="active_tourists">Active Tourists</string>
+    <string name="hotspots_active">Hotspots Active</string>
+    <string name="peak_hours">Peak Hours</string>
+    <string name="view_detailed_analytics">View Detailed Analytics</string>
+
+    <!-- Navigation Menu -->
+    <string name="top_up">Top-Up</string>
+    <string name="shuttle_routes">Shuttle Routes</string>
+    <string name="live_location_density">Live Location Density</string>
+    <string name="find_parking_spot">Find Parking Spot</string>
+    <string name="tourist_spot_recommendation">Tourist Spot Recommendation</string>
+    <string name="view_card">View Card</string>
+    <string name="all_in_one_card">All in One Card</string>
+
+    <!-- Permissions -->
+    <string name="permission_camera_title">Camera Permission Required</string>
+    <string name="permission_camera_message">Camera access is needed to scan QR codes for quick login and card verification.</string>
+    <string name="permission_location_title">Location Permission Required</string>
+    <string name="permission_location_message">Location access is needed to provide accurate navigation, find nearby services, and show real-time traffic density.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="deny_permission">Not Now</string>
+
+    <!-- Error Messages -->
+    <string name="error_network">Network connection error. Please check your internet connection.</string>
+    <string name="error_loading">Error loading page. Pull down to refresh.</string>
+    <string name="error_camera_unavailable">Camera is not available on this device.</string>
+    <string name="error_location_unavailable">Location services are not available.</string>
+    <string name="error_permission_denied">Permission denied. Some features may not work properly.</string>
+
+    <!-- Success Messages -->
+    <string name="success_login">Successfully logged in!</string>
+    <string name="success_qr_scanned">QR code scanned successfully!</string>
+    <string name="success_card_loaded">Card information loaded successfully!</string>
+
+    <!-- Loading Messages -->
+    <string name="loading">Loading…</string>
+    <string name="loading_dashboard">Loading dashboard…</string>
+    <string name="loading_map">Loading map data…</string>
+    <string name="scanning_qr">Scanning QR code…</string>
+
+    <!-- Buttons -->
+    <string name="retry">Retry</string>
+    <string name="refresh">Refresh</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="continue_text">Continue</string>
+    <string name="skip">Skip</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="notifications">Notifications</string>
+    <string name="privacy">Privacy</string>
+    <string name="about">About</string>
+    <string name="logout">Logout</string>
+
+    <!-- Notifications -->
+    <string name="notification_traffic_alert">Traffic Alert</string>
+    <string name="notification_route_update">Route Update Available</string>
+    <string name="notification_parking_available">Parking Spots Available Nearby</string>
+
+    <!-- Accessibility -->
+    <string name="content_description_logo">CrowdShift application logo</string>
+    <string name="content_description_refresh">Pull to refresh</string>
+    <string name="content_description_back">Go back</string>
+    <string name="content_description_menu">Open menu</string>
+</resources>
