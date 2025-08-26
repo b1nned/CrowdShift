@@ -1,123 +1,101 @@
 package com.example.crowdshift
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.webkit.*
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.journeyapps.barcodescanner.ScanContract
-import com.journeyapps.barcodescanner.ScanOptions
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
+    private lateinit var progressBar: ProgressBar
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var sharedPreferences: SharedPreferences
-    private var userBeepId: String? = null
 
-    companion object {
-        private const val CROWDSHIFT_URL = "https://larkaholic.github.io/Crowdshift/"
-        private const val PREF_NAME = "CrowdShiftPrefs"
-        private const val KEY_BEEP_ID = "beep_id"
-        private const val KEY_IS_LOGGED_IN = "is_logged_in"
+    private val webViewUrl = "https://larkaholic.github.io/Crowdshift/"
 
-        fun start(context: Context, beepId: String) {
-            val intent = Intent(context, MainActivity::class.java).apply {
-                putExtra("beepId", beepId)
-            }
-            context.startActivity(intent)
-        }
-    }
-
-    // Modern permission launcher
-    private val permissionLauncher = registerForActivityResult(
+    private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         val allGranted = permissions.values.all { it }
-        if (allGranted) {
-            showToast("All permissions granted")
-        } else {
-            showToast("Some features may be limited without permissions")
+        if (!allGranted) {
+            Toast.makeText(this, "Some permissions were denied. App functionality may be limited.", Toast.LENGTH_LONG).show()
         }
-    }
-
-    // QR Scanner launcher
-    private val qrScannerLauncher = registerForActivityResult(ScanContract()) { result ->
-        handleQRScanResult(result.contents)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initializeComponents()
+        initViews()
         setupWebView()
-        setupSwipeRefresh()
-        requestPermissions()
-
-        // Get user data from intent or preferences
-        userBeepId = intent.getStringExtra("beepId") ?: sharedPreferences.getString(KEY_BEEP_ID, null)
-
-        if (userBeepId != null) {
-            saveUserSession(userBeepId!!)
-            loadWebAppWithAutoLogin()
-        } else {
-            // Redirect to login if no valid session
-            redirectToLogin()
-        }
+        checkPermissions()
+        loadWebApp()
     }
 
-    private fun initializeComponents() {
+    private fun initViews() {
         webView = findViewById(R.id.webView)
+        progressBar = findViewById(R.id.progressBar)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
-        sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            webView.reload()
+        }
+
+        swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(this, R.color.primary_green),
+            ContextCompat.getColor(this, R.color.secondary_blue),
+            ContextCompat.getColor(this, R.color.accent_orange)
+        )
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
-        webView.settings.apply {
-            javaScriptEnabled = true
-            javaScriptCanOpenWindowsAutomatically = true
-            domStorageEnabled = true
-            databaseEnabled = true
-            setGeolocationEnabled(true)
-            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            setSupportZoom(true)
-            builtInZoomControls = true
-            displayZoomControls = false
-            cacheMode = WebSettings.LOAD_DEFAULT
-            userAgentString = "$userAgentString CrowdShiftApp/1.0"
-        }
+        webView.apply {
+            webViewClient = CrowdShiftWebViewClient()
+            webChromeClient = CrowdShiftWebChromeClient()
 
-        webView.webViewClient = CrowdShiftWebViewClient()
-        webView.webChromeClient = CrowdShiftWebChromeClient()
-        webView.addJavascriptInterface(WebAppInterface(), "CrowdShiftAndroid")
+            settings.apply {
+                javaScriptEnabled = true
+                domStorageEnabled = true
+                allowFileAccess = true
+                allowContentAccess = true
+                setSupportZoom(true)
+                builtInZoomControls = true
+                displayZoomControls = false
+                loadWithOverviewMode = true
+                useWideViewPort = true
+                cacheMode = WebSettings.LOAD_DEFAULT
+                mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+
+                // Enable location services
+                setGeolocationEnabled(true)
+
+                // Enable camera and microphone
+                mediaPlaybackRequiresUserGesture = false
+            }
+
+            // Add JavaScript interface for native functionality
+            addJavascriptInterface(CrowdShiftJSInterface(this@MainActivity), "CrowdShiftAndroid")
+        }
     }
 
-    private fun setupSwipeRefresh() {
-        swipeRefreshLayout.apply {
-            setOnRefreshListener { webView.reload() }
-            setColorSchemeColors(
-                ContextCompat.getColor(this@MainActivity, android.R.color.holo_green_dark),
-                ContextCompat.getColor(this@MainActivity, android.R.color.holo_blue_dark),
-                ContextCompat.getColor(this@MainActivity, android.R.color.holo_orange_dark)
-            )
-        }
-    }
-
-    private fun requestPermissions() {
+    private fun checkPermissions() {
         val permissions = arrayOf(
-            Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
         val permissionsToRequest = permissions.filter {
@@ -125,272 +103,150 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (permissionsToRequest.isNotEmpty()) {
-            permissionLauncher.launch(permissionsToRequest.toTypedArray())
+            requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
         }
     }
 
-    private fun saveUserSession(beepId: String) {
-        sharedPreferences.edit().apply {
-            putString(KEY_BEEP_ID, beepId)
-            putBoolean(KEY_IS_LOGGED_IN, true)
-            apply()
-        }
+    private fun loadWebApp() {
+        webView.loadUrl(webViewUrl)
     }
 
-    private fun clearUserSession() {
-        sharedPreferences.edit().apply {
-            remove(KEY_BEEP_ID)
-            putBoolean(KEY_IS_LOGGED_IN, false)
-            apply()
-        }
-    }
-
-    private fun loadWebAppWithAutoLogin() {
-        val urlWithAuth = "$CROWDSHIFT_URL?beepId=$userBeepId&autoLogin=true"
-        webView.loadUrl(urlWithAuth)
-    }
-
-    private fun redirectToLogin() {
-        clearUserSession()
-        startActivity(Intent(this, LoginActivity::class.java))
-        finish()
-    }
-
-    private fun handleQRScanResult(result: String?) {
-        result?.let { qrData ->
-            val jsCode = "javascript:if(typeof handleQRResult === 'function') { handleQRResult('$qrData'); }"
-            webView.evaluateJavascript(jsCode) {
-                showToast("QR Code processed: $qrData")
-            }
-        } ?: run {
-            val jsCode = "javascript:if(typeof handleQRCancel === 'function') { handleQRCancel(); }"
-            webView.evaluateJavascript(jsCode, null)
-        }
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        when {
-            webView.canGoBack() -> webView.goBack()
-            else -> super.onBackPressed()
-        }
-    }
-
-    /**
-     * JavaScript Interface for communication between web app and native Android
-     */
-    inner class WebAppInterface {
-
-        @JavascriptInterface
-        fun openQRScanner() {
-            runOnUiThread {
-                if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA)
-                    == PackageManager.PERMISSION_GRANTED) {
-
-                    val options = ScanOptions().apply {
-                        setPrompt("Scan QR Code")
-                        setBeepEnabled(true)
-                        setOrientationLocked(false)
-                        setBarcodeImageEnabled(true)
-                    }
-                    qrScannerLauncher.launch(options)
-                } else {
-                    permissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
-                    showToast("Camera permission required for QR scanning")
-                }
-            }
-        }
-
-        @JavascriptInterface
-        fun showToast(message: String) {
-            runOnUiThread {
-                showToast(message)
-            }
-        }
-
-        @JavascriptInterface
-        fun getUserId(): String {
-            return userBeepId ?: ""
-        }
-
-        @JavascriptInterface
-        fun logout() {
-            runOnUiThread {
-                clearUserSession()
-                redirectToLogin()
-            }
-        }
-
-        @JavascriptInterface
-        fun isLoggedIn(): Boolean {
-            return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)
-        }
-    }
-
-    /**
-     * Custom WebViewClient for handling navigation and page loading
-     */
     inner class CrowdShiftWebViewClient : WebViewClient() {
-
-        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-            request?.url?.let { uri ->
-                val urlString = uri.toString()
-
-                // Allow navigation within CrowdShift domains and local assets
-                if (urlString.startsWith("file:///android_asset/") ||
-                    uri.host?.contains("crowdshift", ignoreCase = true) == true ||
-                    uri.host?.contains("larkaholic.github.io", ignoreCase = true) == true) {
-                    return false // Let WebView handle it
-                }
-
-                // Handle external links
-                return try {
-                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                    startActivity(intent)
-                    true
-                } catch (e: Exception) {
-                    false
-                }
-            }
-            return super.shouldOverrideUrlLoading(view, request)
-        }
-
-        override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
-            swipeRefreshLayout.isRefreshing = true
+            progressBar.visibility = View.VISIBLE
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
+            progressBar.visibility = View.GONE
             swipeRefreshLayout.isRefreshing = false
-            injectMobileOptimizations()
-            injectUserSession()
+
+            // Inject custom CSS for mobile optimization
+            view?.evaluateJavascript("""
+                javascript:(function() {
+                    var meta = document.createElement('meta');
+                    meta.name = 'viewport';
+                    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                    document.getElementsByTagName('head')[0].appendChild(meta);
+                    
+                    // Add custom styles for mobile
+                    var style = document.createElement('style');
+                    style.innerHTML = `
+                        body { 
+                            -webkit-touch-callout: none;
+                            -webkit-user-select: none;
+                            -khtml-user-select: none;
+                            -moz-user-select: none;
+                            -ms-user-select: none;
+                            user-select: none;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        }
+                        .dashboard-card {
+                            border-radius: 12px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            margin: 8px;
+                            background: white;
+                        }
+                        .feature-button {
+                            border-radius: 8px;
+                            padding: 12px;
+                            margin: 4px;
+                            transition: all 0.3s ease;
+                        }
+                        .feature-button:active {
+                            transform: scale(0.95);
+                        }
+                    `;
+                    document.head.appendChild(style);
+                })()
+            """.trimIndent(), null)
+        }
+
+        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            val url = request?.url.toString()
+
+            // Handle external links
+            if (url.startsWith("tel:") || url.startsWith("mailto:") || url.startsWith("sms:")) {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                } catch (e: Exception) {
+                    Toast.makeText(this@MainActivity, "No app found to handle this action", Toast.LENGTH_SHORT).show()
+                }
+                return true
+            }
+
+            // Allow navigation within the app domain
+            return if (url.contains("your-crowdshift-domain.com")) {
+                false
+            } else {
+                // Open external links in browser
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                } catch (e: Exception) {
+                    Toast.makeText(this@MainActivity, "Cannot open link", Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
         }
 
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
             super.onReceivedError(view, request, error)
+            progressBar.visibility = View.GONE
             swipeRefreshLayout.isRefreshing = false
 
-            if (request?.isForMainFrame == true) {
-                showToast("Connection error. Please check your internet and try again.")
-            }
-        }
-
-        private fun injectMobileOptimizations() {
-            val javascript = """
-                (function() {
-                    // Add viewport meta tag if not present
-                    if (!document.querySelector('meta[name="viewport"]')) {
-                        var meta = document.createElement('meta');
-                        meta.name = 'viewport';
-                        meta.content = 'width=device-width, initial-scale=1.0, user-scalable=yes';
-                        document.getElementsByTagName('head')[0].appendChild(meta);
-                    }
-                    
-                    // Mobile-friendly styles
-                    var style = document.createElement('style');
-                    style.textContent = `
-                        body { 
-                            -webkit-text-size-adjust: 100%; 
-                            -webkit-user-select: none;
-                            -webkit-touch-callout: none;
-                        }
-                        * {
-                            -webkit-tap-highlight-color: rgba(0,0,0,0);
-                        }
-                    `;
-                    document.head.appendChild(style);
-                })();
-            """.trimIndent()
-
-            webView.evaluateJavascript(javascript, null)
-        }
-
-        private fun injectUserSession() {
-            userBeepId?.let { beepId ->
-                val javascript = """
-                    (function() {
-                        // Set user session data
-                        if (typeof window.CrowdShiftSession === 'undefined') {
-                            window.CrowdShiftSession = {
-                                userId: '$beepId',
-                                isLoggedIn: true,
-                                loginTime: new Date().toISOString()
-                            };
-                        }
-                        
-                        // Trigger auto-login if function exists
-                        if (typeof handleAutoLogin === 'function') {
-                            handleAutoLogin('$beepId');
-                        }
-                        
-                        // Store in localStorage if available
-                        if (typeof localStorage !== 'undefined') {
-                            localStorage.setItem('crowdshift_user_id', '$beepId');
-                            localStorage.setItem('crowdshift_logged_in', 'true');
-                        }
-                    })();
-                """.trimIndent()
-
-                webView.evaluateJavascript(javascript, null)
-            }
+            // Load error page
+            view?.loadUrl("file:///android_asset/error.html")
         }
     }
 
-    /**
-     * Custom WebChromeClient for advanced web features
-     */
     inner class CrowdShiftWebChromeClient : WebChromeClient() {
+        override fun onProgressChanged(view: WebView?, newProgress: Int) {
+            super.onProgressChanged(view, newProgress)
+            progressBar.progress = newProgress
+
+            if (newProgress == 100) {
+                progressBar.visibility = View.GONE
+            }
+        }
 
         override fun onGeolocationPermissionsShowPrompt(
             origin: String?,
             callback: GeolocationPermissions.Callback?
         ) {
-            // Auto-grant location permission for trusted origins
-            val trustedOrigins = listOf(
-                "file://",
-                "larkaholic.github.io",
-                "crowdshift"
-            )
-
-            val isTrusted = trustedOrigins.any { origin?.contains(it, ignoreCase = true) == true }
-
-            if (isTrusted) {
-                callback?.invoke(origin, true, false)
-            } else {
-                super.onGeolocationPermissionsShowPrompt(origin, callback)
-            }
+            callback?.invoke(origin, true, false)
         }
 
         override fun onPermissionRequest(request: PermissionRequest?) {
-            request?.let { permissionRequest ->
-                when {
-                    permissionRequest.resources.contains(PermissionRequest.RESOURCE_VIDEO_CAPTURE) -> {
-                        if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_GRANTED) {
-                            permissionRequest.grant(permissionRequest.resources)
-                        } else {
-                            permissionRequest.deny()
-                            showToast("Camera permission needed")
-                        }
-                    }
-                    else -> permissionRequest.deny()
-                }
-            }
+            request?.grant(request.resources)
         }
 
-        override fun onReceivedTitle(view: WebView?, title: String?) {
-            super.onReceivedTitle(view, title)
-            supportActionBar?.title = title ?: "CrowdShift"
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+            android.util.Log.d("CrowdShift", "Console: ${consoleMessage?.message()}")
+            return true
         }
+    }
 
-        override fun onProgressChanged(view: WebView?, newProgress: Int) {
-            super.onProgressChanged(view, newProgress)
-            // You can add a progress bar here if needed
+    override fun onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            super.onBackPressed()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        webView.onPause()
+    }
+
+    override fun onDestroy() {
+        webView.destroy()
+        super.onDestroy()
     }
 }

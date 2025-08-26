@@ -4,16 +4,24 @@
     <color name="crowdshift_primary">#0f6635</color> <!-- Dark Green from logo -->
     <color name="crowdshift_secondary">#299ba1</color> <!-- Teal blue -->
     <color name="crowdshift_accent">#27ace8</color> <!-- Light blue -->
+    <color name="primary_green">#2E8B57</color>
+    <color name="primary_green_dark">#1F5F3F</color>
+    <color name="primary_green_light">#4CAF50</color>
 
     <!-- Background gradient colors -->
     <color name="gradient_start">#d9ebe4</color>
     <color name="gradient_middle">#7fc6c5</color>
     <color name="gradient_end">#1175cd</color>
+    <color name="gradient_blue_start">#76b0d7</color>
+    <color name="gradient_blue_end">#1175cd</color>
 
     <!-- Card and UI colors -->
     <color name="card_light">#cbe6de</color>
     <color name="card_medium">#7fc6c5</color>
     <color name="card_dark">#76b0d7</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="card_shadow">#1A000000</color>
+    <color name="card_border">#E0E0E0</color>
 
     <!-- Pin/Marker colors -->
     <color name="pin_red">#e74c3c</color>
@@ -45,13 +53,14 @@
     <color name="background_color">#F5F5F5</color>
     <color name="surface_color">#FFFFFF</color>
     <color name="logo_card_background">#40FFFFFF</color>
+    <color name="background_light">#FAFAFA</color>
+    <color name="background_white">#FFFFFF</color>
+    <color name="background_dark">#303030</color>
 
     <!-- Text Colors -->
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="hint_text">#BDBDBD</color>
-
-
 
     <!-- Ripple Effects -->
     <color name="primary_ripple">#40FFFFFF</color>
@@ -65,10 +74,53 @@
     <color name="success_color">#4CAF50</color>
     <color name="warning_color">#FF9800</color>
     <color name="error_color">#F44336</color>
+    <color name="status_normal">#4CAF50</color>
+    <color name="status_warning">#FF9800</color>
+    <color name="status_error">#F44336</color>
+    <color name="status_info">#2196F3</color>
 
     <!-- Primary Colors -->
     <color name="primary_color">#2D5A27</color>
     <color name="primary_dark">#1E3F1C</color>
     <color name="primary_light">#4A7C59</color>
+
+    <!-- Dashboard Feature Colors -->
+    <color name="feature_topup">#4CAF50</color>
+    <color name="feature_shuttle">#2196F3</color>
+    <color name="feature_location">#FF9800</color>
+    <color name="feature_parking">#9C27B0</color>
+    <color name="feature_spots">#00BCD4</color>
+    <color name="feature_card">#795548</color>
+
+    <!-- Button Colors -->
+    <color name="button_primary">#2E8B57</color>
+    <color name="button_primary_pressed">#1F5F3F</color>
+    <color name="button_secondary">#E0E0E0</color>
+    <color name="button_secondary_pressed">#BDBDBD</color>
+
+    <!-- Common Colors -->
+    <color name="transparent">#00000000</color>
+    <color name="light_gray">#F5F5F5</color>
+    <color name="medium_gray">#E0E0E0</color>
+    <color name="dark_gray">#616161</color>
+    <color name="error_red">#D32F2F</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
+    <color name="text_on_primary">#FFFFFF</color>
+    <color name="text_on_secondary">#FFFFFF</color>
+
+    <!-- Accent Colors -->
+    <color name="accent_orange">#FF9800</color>
+    <color name="accent_red">#F44336</color>
+    <color name="accent_purple">#9C27B0</color>
+    <color name="accent_teal">#009688</color>
+
+    <!-- Secondary Colors -->
+    <color name="secondary_blue">#1175cd</color>
+    <color name="secondary_blue_light">#76b0d7</color>
+
 
 </resources>
