@@ -37,4 +37,38 @@
     <color name="error">#F44336</color>
     <color name="info">#2196F3</color>
 
+    <!-- Accent Colors -->
+    <color name="accent_color">#45B7D1</color>
+    <color name="accent_light">#7FB3D3</color>
+
+    <!-- Background Colors -->
+    <color name="background_color">#F5F5F5</color>
+    <color name="surface_color">#FFFFFF</color>
+    <color name="logo_card_background">#40FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="hint_text">#BDBDBD</color>
+
+
+
+    <!-- Ripple Effects -->
+    <color name="primary_ripple">#40FFFFFF</color>
+    <color name="secondary_ripple">#402D5A27</color>
+    <color name="qr_ripple">#40FFFFFF</color>
+
+    <!-- Divider -->
+    <color name="divider_color">#E0E0E0</color>
+
+    <!-- Status Colors -->
+    <color name="success_color">#4CAF50</color>
+    <color name="warning_color">#FF9800</color>
+    <color name="error_color">#F44336</color>
+
+    <!-- Primary Colors -->
+    <color name="primary_color">#2D5A27</color>
+    <color name="primary_dark">#1E3F1C</color>
+    <color name="primary_light">#4A7C59</color>
+
 </resources>

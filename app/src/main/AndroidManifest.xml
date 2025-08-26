@@ -52,6 +52,7 @@
         android:hardwareAccelerated="true"
         tools:targetApi="31">
 
+        <!-- Splash screen launches first -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -63,6 +64,15 @@
             </intent-filter>
         </activity>
 
+        <!-- Login screen (password = 1234 1234) -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.CrowdShift">
+        </activity>
+
+        <!-- Main WebView activity -->
         <activity
             android:name=".MainActivity"
             android:exported="false"

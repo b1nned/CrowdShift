@@ -5,28 +5,101 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Main Circle Background -->
+    <!-- Background Circle (Light Green) -->
     <path
-        android:fillColor="#0f6635"
-        android:pathData="M54,20C32.35,20 15,37.35 15,59s17.35,39 39,39 39,-17.35 39,-39S75.65,20 54,20z"/>
+        android:fillColor="#E8F5E8"
+        android:pathData="M54,10C29.7,10 10,29.7 10,54s19.7,44 44,44 44,-19.7 44,-44S78.3,10 54,10z"/>
 
-    <!-- White "C" Letter -->
+    <!-- Pin Dots Around the Circle (Map Pin Style) -->
+
+    <!-- Top Left Pin (Red - Hotels) -->
+    <path
+        android:fillColor="#FF6B6B"
+        android:pathData="M35,25C32,25 30,27 30,30s2,5 5,5 5,-2 5,-5S38,25 35,25z"/>
+    <path
+        android:fillColor="#FF6B6B"
+        android:pathData="M35,35L33,40L37,40L35,35z"/>
+
+    <!-- Top Right Pin (Teal - Transport) -->
+    <path
+        android:fillColor="#4ECDC4"
+        android:pathData="M73,25C70,25 68,27 68,30s2,5 5,5 5,-2 5,-5S76,25 73,25z"/>
+    <path
+        android:fillColor="#4ECDC4"
+        android:pathData="M73,35L71,40L75,40L73,35z"/>
+
+    <!-- Left Pin (Blue - Parking) -->
+    <path
+        android:fillColor="#45B7D1"
+        android:pathData="M20,54C17,54 15,56 15,59s2,5 5,5 5,-2 5,-5S23,54 20,54z"/>
+    <path
+        android:fillColor="#45B7D1"
+        android:pathData="M20,64L18,69L22,69L20,64z"/>
+
+    <!-- Right Pin (Yellow - Restaurants) -->
+    <path
+        android:fillColor="#F9CA24"
+        android:pathData="M88,54C85,54 83,56 83,59s2,5 5,5 5,-2 5,-5S91,54 88,54z"/>
+    <path
+        android:fillColor="#F9CA24"
+        android:pathData="M88,64L86,69L90,69L88,64z"/>
+
+    <!-- Bottom Left Pin (Purple - Security) -->
+    <path
+        android:fillColor="#A29BFE"
+        android:pathData="M35,83C32,83 30,85 30,88s2,5 5,5 5,-2 5,-5S38,83 35,83z"/>
+    <path
+        android:fillColor="#A29BFE"
+        android:pathData="M35,93L33,98L37,98L35,93z"/>
+
+    <!-- Bottom Right Pin (Pink - Safety) -->
+    <path
+        android:fillColor="#FD79A8"
+        android:pathData="M73,83C70,83 68,85 68,88s2,5 5,5 5,-2 5,-5S76,83 73,83z"/>
+    <path
+        android:fillColor="#FD79A8"
+        android:pathData="M73,93L71,98L75,98L73,93z"/>
+
+    <!-- Central Green Circle for the "C" -->
+    <path
+        android:fillColor="#2D5A27"
+        android:pathData="M54,35C44,35 36,43 36,53s8,18 18,18 18,-8 18,-18S64,35 54,35z"/>
+
+    <!-- Large White "C" in Center -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M45,40c-5.52,0 -10,4.48 -10,10v8c0,5.52 4.48,10 10,10h6v-5h-6c-2.76,0 -5,-2.24 -5,-5v-8c0,-2.76 2.24,-5 5,-5h6v-5h-6z"/>
+        android:pathData="M54,42c-6,0 -11,5 -11,11s5,11 11,11c2,0 4,-0.5 5.5,-1.5l-2,-3c-1,0.5 -2.2,0.8 -3.5,0.8c-4,0 -7,-3 -7,-7s3,-7 7,-7c1.3,0 2.5,0.3 3.5,0.8l2,-3C58,42.5 56,42 54,42z"/>
 
-    <!-- Simple Dot Decorations -->
+    <!-- Small Icons in Pins (Optional - can be simplified to just solid colors) -->
+
+    <!-- Hotel icon in red pin -->
     <path
-        android:fillColor="#27ace8"
-        android:pathData="M35,35m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
+        android:fillColor="#FFFFFF"
+        android:pathData="M33,28h4v2h-4v-2z"/>
+
+    <!-- P for Parking in blue pin -->
     <path
-        android:fillColor="#299ba1"
-        android:pathData="M73,35m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
+        android:fillColor="#FFFFFF"
+        android:pathData="M18,57h2v4h-2v-4zM20,57h1.5c0.8,0 1.5,0.7 1.5,1.5S22.3,60 21.5,60H20v-3z"/>
+
+    <!-- Transport icon in teal pin -->
     <path
-        android:fillColor="#e74c3c"
-        android:pathData="M35,83m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
+        android:fillColor="#FFFFFF"
+        android:pathData="M71,28h4v2h-4v-2zM71,30h1v1h-1v-1zM74,30h1v1h-1v-1z"/>
+
+    <!-- Fork/Spoon in yellow pin -->
     <path
-        android:fillColor="#f39c12"
-        android:pathData="M73,83m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0"/>
+        android:fillColor="#FFFFFF"
+        android:pathData="M86,57h1v4h-1v-4zM88,57v2h1v2h-1v-4z"/>
+
+    <!-- Shield in purple pin -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M35,86l-2,2v2l2,-1l2,1v-2l-2,-2z"/>
+
+    <!-- Safety icon in pink pin -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M73,86c-1,0 -2,1 -2,2s1,2 2,2s2,-1 2,-2S74,86 73,86z"/>
 
 </vector>

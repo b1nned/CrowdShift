@@ -352,8 +352,7 @@ class SplashActivity : AppCompatActivity() {
         }
 
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtras(this.intent.extras ?: Bundle())
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
