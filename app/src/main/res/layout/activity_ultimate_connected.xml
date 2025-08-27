@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/animated_background"
+    tools:context=".SplashActivity">
+
+    <!-- Animated Road Network -->
+    <com.example.crowdshift.AnimatedRoadNetworkView
+        android:id="@+id/animated_road_network"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.7" />
+
+    <!-- Static Road Network Backup -->
+    <ImageView
+        android:id="@+id/static_road_network"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:alpha="0.6"
+        android:scaleType="centerInside"
+        android:src="@drawable/curved_road_network"
+        android:visibility="gone" />
+
+    <!-- Main Content with Precisely Positioned Pins -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp">
+
+        <!-- TOP ROW PINS - Connected by main horizontal curve -->
+
+        <!-- Red Hotel Pin (Top Left) -->
+        <FrameLayout
+            android:id="@+id/pin_container_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:layout_marginStart="60dp">
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/pin_glow_red"
+                android:alpha="0.4" />
+
+            <ImageView
+                android:id="@+id/pin_1"
+                android:layout_width="38dp"
+                android:layout_height="46dp"
+                android:layout_gravity="center"
+                android:background="@drawable/pin_background_red"
+                android:contentDescription="Hotel"
+                android:elevation="15dp"
+                android:padding="9dp"
+                android:src="@drawable/ic_hotel"
+                android:tint="@android:color/white" />
+        </FrameLayout>
+
+        <!-- Green Location Pin (Top Center) -->
+        <FrameLayout
+            android:id="@+id/pin_container_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="120dp">
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/pin_glow_green"
+                android:alpha="0.4" />
+
+            <ImageView
+                android:id="@+id/pin_2"
+                android:layout_width="38dp"
+                android:layout_height="46dp"
+                android:layout_gravity="center"
+                android:background="@drawable/pin_background_green"
+                android:contentDescription="Location"
+                android:elevation="15dp"
+                android:padding="9dp"
+                android:src="@drawable/ic_location"
+                android:tint="@android:color/white" />
+        </FrameLayout>
+
+        <!-- Blue Transit Pin (Top Right) -->
+        <FrameLayout
+            android:id="@+id/pin_container_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="120dp"
+            android:layout_marginEnd="60dp">
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/pin_glow_blue"
+                android:alpha="0.4" />
+
+            <ImageView
+                android:id="@+id/pin_3"
+                android:layout_width="38dp"
+                android:layout_height="46dp"
+                android:layout_gravity="center"
+                android:background="@drawable/pin_background_blue"
+                android:contentDescription="Transit"
+                android:elevation="15dp"
+                android:padding="9dp"
+                android:src="@drawable/ic_bus"
+                android:tint="@android:color/white" />
+        </FrameLayout>
+
+        <!-- BOTTOM ROW PINS - Connected by secondary curve -->
+
+        <!-- Red Shopping Pin (Bottom Left) -->
+        <ImageView
+            android:id="@+id/pin_4"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="200dp"
+            android:layout_marginStart="50dp"
+            android:background="@drawable/pin_background_purple"
+            android:contentDescription="Shopping"
+            android:elevation="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_shopping"
+            android:tint="@android:color/white" />
+
+        <!-- Cyan Parking Pin (Bottom Center Left) -->
+        <ImageView
+            android:id="@+id/pin_5"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:layout_marginStart="-70dp"
+            android:background="@drawable/pin_shape_cyan"
+            android:contentDescription="Parking"
+            android:elevation="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_parking"
+            android:tint="@android:color/white" />
+
+        <!-- Orange Restaurant Pin (Bottom Center Right) -->
+        <ImageView
+            android:id="@+id/pin_6"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="200dp"
+            android:layout_marginStart="70dp"
+            android:background="@drawable/pin_background_orange"
+            android:contentDescription="Restaurant"
+            android:elevation="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_restaurant"
+            android:tint="@android:color/white" />
+
+        <!-- Pink Security Pin (Bottom Right) -->
+        <ImageView
+            android:id="@+id/pin_7"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="200dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/pin_background_pink"
+            android:contentDescription="Security"
+            android:elevation="12dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_security"
+            android:tint="@android:color/white" />
+
+        <!-- CROWDSHIFT Logo - Centered -->
+        <LinearLayout
+            android:id="@+id/logo_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="280dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView android:id="@+id/letter_c" style="@style/MagicalLetter" android:text="C" />
+            <TextView android:id="@+id/letter_r1" style="@style/MagicalLetter" android:text="R" />
+            <TextView android:id="@+id/letter_o1" style="@style/MagicalLetter" android:text="O" />
+            <TextView android:id="@+id/letter_w" style="@style/MagicalLetter" android:text="W" />
+            <TextView android:id="@+id/letter_d" style="@style/MagicalLetter" android:text="D" android:layout_marginEnd="8dp" />
+            <TextView android:id="@+id/letter_s" style="@style/MagicalLetter" android:text="S" />
+            <TextView android:id="@+id/letter_h" style="@style/MagicalLetter" android:text="H" />
+            <TextView android:id="@+id/letter_i" style="@style/MagicalLetter" android:text="I" />
+            <TextView android:id="@+id/letter_f" style="@style/MagicalLetter" android:text="F" />
+            <TextView android:id="@+id/letter_t" style="@style/MagicalLetter" android:text="T" />
+
+        </LinearLayout>
+
+        <!-- Tagline - Below Logo -->
+        <TextView
+            android:id="@+id/tagline_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/logo_container"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:elevation="6dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:shadowColor="#60000000"
+            android:shadowDx="2"
+            android:shadowDy="3"
+            android:shadowRadius="8"
+            android:text="Less Congestions, More Connections"
+            android:textAlignment="center"
+            android:textColor="#555555"
+            android:textSize="17sp" />
+
+        <!-- Progress Indicator - Bottom Center -->
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="100dp">
+
+            <View
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:background="@drawable/cosmic_ring"
+                android:elevation="2dp"
+                android:alpha="0.8" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:elevation="10dp"
+                android:indeterminateTint="#0f6635" />
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

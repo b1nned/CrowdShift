@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="qr_scan"
+        android:enabled="true"
+        android:icon="@drawable/ic_qr_code"
+        android:shortcutShortLabel="@string/shortcut_scan_qr"
+        android:shortcutLongLabel="@string/shortcut_scan_qr_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.crowdshift"
+            android:targetClass="com.example.crowdshift.MainActivity"
+            android:data="crowdshift://qr-scan" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="city_status"
+        android:enabled="true"
+        android:icon="@drawable/ic_location"
+        android:shortcutShortLabel="@string/shortcut_city_status"
+        android:shortcutLongLabel="@string/shortcut_city_status_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.crowdshift"
+            android:targetClass="com.example.crowdshift.MainActivity"
+            android:data="crowdshift://city-status" />
+    </shortcut>
+</shortcuts>

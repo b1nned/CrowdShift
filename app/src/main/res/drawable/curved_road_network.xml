@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400dp"
+    android:height="400dp"
+    android:viewportWidth="400"
+    android:viewportHeight="400">
+
+    <!-- Main curved road connecting top row pins (Red -> Green -> Blue) -->
+    <path
+        android:pathData="M50,150 Q200,120 350,150"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="8"
+        android:strokeAlpha="0.8"
+        android:fillType="nonZero" />
+
+    <!-- Road dashes on top curve -->
+    <path
+        android:pathData="M70,148 Q90,146 110,148"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M130,146 Q150,145 170,146"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M190,145 Q210,144 230,145"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M250,145 Q270,144 290,145"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M310,146 Q330,147 350,148"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+
+    <!-- Curved road connecting bottom row pins -->
+    <path
+        android:pathData="M40,250 Q100,230 160,240 Q220,250 280,240 Q340,230 360,250"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="8"
+        android:strokeAlpha="0.8"
+        android:fillType="nonZero" />
+
+    <!-- Road dashes on bottom curve -->
+    <path
+        android:pathData="M60,245 Q80,240 100,242"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M120,238 Q140,240 160,240"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M180,242 Q200,244 220,245"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M240,244 Q260,242 280,240"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M300,242 Q320,245 340,248"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="3"
+        android:strokeAlpha="0.9" />
+
+    <!-- Vertical connecting roads between top and bottom -->
+    <!-- Left connection -->
+    <path
+        android:pathData="M50,150 Q45,200 40,250"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="6"
+        android:strokeAlpha="0.7"
+        android:fillType="nonZero" />
+
+    <!-- Left connection dashes -->
+    <path
+        android:pathData="M48,170 Q47,180 46,190"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8" />
+    <path
+        android:pathData="M45,210 Q44,220 43,230"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8" />
+
+    <!-- Center connection -->
+    <path
+        android:pathData="M200,150 Q190,200 180,240"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="6"
+        android:strokeAlpha="0.7"
+        android:fillType="nonZero" />
+
+    <!-- Center connection dashes -->
+    <path
+        android:pathData="M198,170 Q195,180 192,190"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8" />
+    <path
+        android:pathData="M188,210 Q185,220 182,230"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8" />
+
+    <!-- Right connection -->
+    <path
+        android:pathData="M350,150 Q355,200 360,250"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="6"
+        android:strokeAlpha="0.7"
+        android:fillType="nonZero" />
+
+    <!-- Right connection dashes -->
+    <path
+        android:pathData="M352,170 Q353,180 354,190"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8" />
+    <path
+        android:pathData="M355,210 Q356,220 357,230"
+        android:strokeColor="#e0e0e0"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.8" />
+
+    <!-- Additional curved cross-connections for network effect -->
+    <path
+        android:pathData="M50,150 Q150,180 280,240"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="4"
+        android:strokeAlpha="0.5"
+        android:fillType="nonZero" />
+
+    <path
+        android:pathData="M350,150 Q250,180 160,240"
+        android:strokeColor="#ffffff"
+        android:strokeWidth="4"
+        android:strokeAlpha="0.5"
+        android:fillType="nonZero" />
+
+    <!-- Network junction points using path circles -->
+    <path
+        android:pathData="M50,146m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.9" />
+    <path
+        android:pathData="M200,146m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.9" />
+    <path
+        android:pathData="M350,146m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.9" />
+    <path
+        android:pathData="M40,246m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.9" />
+    <path
+        android:pathData="M160,236m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.9" />
+    <path
+        android:pathData="M280,236m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.9" />
+    <path
+        android:pathData="M360,246m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.9" />
+
+</vector>

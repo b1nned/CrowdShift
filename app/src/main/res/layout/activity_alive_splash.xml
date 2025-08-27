@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/animated_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".SplashActivity">
+
+    <!-- Floating Pins - Top Row -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/pin_1"
+            android:layout_width="38dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/pin_background_red"
+            android:contentDescription="Hotel"
+            android:elevation="8dp"
+            android:padding="9dp"
+            android:src="@drawable/ic_hotel"
+            android:tint="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/pin_2"
+            android:layout_width="38dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/pin_background_green"
+            android:contentDescription="Location"
+            android:elevation="8dp"
+            android:padding="9dp"
+            android:src="@drawable/ic_location"
+            android:tint="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/pin_3"
+            android:layout_width="38dp"
+            android:layout_height="46dp"
+            android:background="@drawable/pin_background_blue"
+            android:contentDescription="Transit"
+            android:elevation="8dp"
+            android:padding="9dp"
+            android:src="@drawable/ic_bus"
+            android:tint="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- Floating Pins - Bottom Row -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/pin_4"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="22dp"
+            android:background="@drawable/pin_background_red"
+            android:contentDescription="Shopping"
+            android:elevation="6dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_shopping"
+            android:tint="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/pin_5"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="22dp"
+            android:background="@drawable/pin_shape_cyan"
+            android:contentDescription="Parking"
+            android:elevation="6dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_parking"
+            android:tint="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/pin_6"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="22dp"
+            android:background="@drawable/pin_background_orange"
+            android:contentDescription="Restaurant"
+            android:elevation="6dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_restaurant"
+            android:tint="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/pin_7"
+            android:layout_width="36dp"
+            android:layout_height="44dp"
+            android:background="@drawable/pin_background_pink"
+            android:contentDescription="Security"
+            android:elevation="6dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_security"
+            android:tint="@android:color/white" />
+
+    </LinearLayout>
+
+    <!-- CROWDSHIFT - Individual Animated Letters -->
+    <LinearLayout
+        android:id="@+id/logo_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/letter_c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="C"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_r1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="R"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_o1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="O"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_w"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="W"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_d"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="D"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="S"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="H"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_i"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="I"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_f"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="F"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/letter_t"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:fontFamily="sans-serif-black"
+            android:shadowColor="#40000000"
+            android:shadowDx="2"
+            android:shadowDy="4"
+            android:shadowRadius="6"
+            android:text="T"
+            android:textColor="#0f6635"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Animated Tagline with Typewriter Effect -->
+    <TextView
+        android:id="@+id/tagline_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:elevation="2dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:shadowColor="#40000000"
+        android:shadowDx="1"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:text="Less Congestions, More Connections"
+        android:textAlignment="center"
+        android:textColor="#666666"
+        android:textSize="17sp" />
+
+    <!-- Pulsing Progress Indicator -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!-- Outer glow ring -->
+        <View
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="@drawable/progress_glow_ring"
+            android:elevation="1dp" />
+
+        <!-- Main progress bar -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:elevation="4dp"
+            android:indeterminateTint="#0f6635" />
+
+    </FrameLayout>
+
+</LinearLayout>
