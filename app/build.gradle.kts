@@ -21,6 +21,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        // ✅ Put WEB_URL here so all build types can access it
+        buildConfigField("String", "WEB_URL", "\"https://larkaholic.github.io/Crowdshift\"")
     }
 
     buildTypes {

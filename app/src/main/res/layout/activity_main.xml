@@ -2,18 +2,19 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_light"
     tools:context=".MainActivity">
 
-    <!-- Custom Toolbar -->
+    <!-- AppBar with Toolbar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary_green"
-        app:elevation="0dp">
+        android:elevation="4dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -21,13 +22,14 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/primary_green"
             app:titleTextColor="@color/white"
-            app:title="CROWD SHIFT"
+            app:title="CROWDSHIFT"
             app:titleCentered="true"
-            app:titleTextAppearance="@style/ToolbarTitle" />
+            app:titleTextAppearance="@style/TolbarTitle"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Main Content -->
+    <!-- Main Content with proper behavior -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
@@ -36,18 +38,18 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp">
 
-            <!-- WebView -->
             <WebView
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/background_light"
-                android:scrollbars="none"
-                android:overScrollMode="never" />
+                android:overScrollMode="never"
+                android:scrollbars="vertical"
+                android:layout_gravity="center" />
 
-            <!-- Loading Progress Bar -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -61,52 +63,117 @@
                 android:progress="0"
                 android:visibility="gone" />
 
-            <!-- Connection Status -->
-            <LinearLayout
-                android:id="@+id/connectionStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:background="@color/error_red"
-                android:orientation="horizontal"
-                android:padding="8dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_wifi_off"
-                    android:tint="@color/white" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:text="No internet connection"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
-
         </FrameLayout>
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- Floating Action Button for Quick Actions -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabQuickActions"
+    <!-- Overlay for navigation -->
+    <View
+        android:id="@+id/outside_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000"
+        android:visibility="gone"
+        android:clickable="false"
+        android:focusable="false" />
+
+    <!-- Floating Navigation Menu -->
+    <LinearLayout
+        android:id="@+id/floating_nav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:backgroundTint="@color/primary_green"
-        android:contentDescription="Quick Actions"
-        android:src="@drawable/ic_qr_code"
-        app:tint="@color/white"
-        app:elevation="8dp"
-        app:fabSize="normal" />
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:background="@drawable/bg_nav_floating"
+        android:elevation="12dp"
+        android:visibility="gone"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="90dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp">
+
+        <ImageButton
+            android:id="@+id/nav_dashboard"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_dashboard"
+            android:contentDescription="Dashboard" />
+
+        <ImageButton
+            android:id="@+id/nav_city_status"
+            style="@style/FloatingNavItem"
+            android:contentDescription="City Status"
+            android:src="@drawable/ic_location" />
+
+        <ImageButton
+            android:id="@+id/nav_scan_qr"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_qr_code"
+            android:contentDescription="Scan QR" />
+
+        <ImageButton
+            android:id="@+id/nav_top_up"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_shopping"
+            android:contentDescription="Top Up" />
+
+        <ImageButton
+            android:id="@+id/nav_shuttle_routes"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_bus"
+            android:contentDescription="Shuttle Routes" />
+
+        <ImageButton
+            android:id="@+id/nav_find_parking"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_parking"
+            android:contentDescription="Find Parking" />
+
+        <ImageButton
+            android:id="@+id/nav_tourist_spots"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_restaurant"
+            android:contentDescription="Tourist Spots" />
+
+        <ImageButton
+            android:id="@+id/nav_settings"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Settings" />
+
+        <ImageButton
+            android:id="@+id/nav_help"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_help"
+            android:contentDescription="Help" />
+
+        <ImageButton
+            android:id="@+id/nav_about"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_info"
+            android:contentDescription="About" />
+
+        <ImageButton
+            android:id="@+id/nav_logout"
+            style="@style/FloatingNavItem"
+            android:src="@drawable/ic_logout"
+            android:contentDescription="Logout" />
+
+    </LinearLayout>
+
+    <!-- Toggle Navigation Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/toggle_nav_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_x="13dp"
+        android:layout_y="280dp"
+        android:elevation="8dp"
+        android:src="@drawable/ic_menu"
+        app:backgroundTint="@color/primary_green"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
+        app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

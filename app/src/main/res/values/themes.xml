@@ -4,45 +4,51 @@
     <!-- Base application theme -->
     <style name="Theme.CrowdShift" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color -->
-        <item name="colorPrimary">@color/crowdshift_primary</item>
-        <item name="colorPrimaryVariant">@color/crowdshift_primary</item>
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorPrimaryVariant">@color/primary_green_dark</item>
         <item name="colorOnPrimary">@color/white</item>
 
         <!-- Secondary brand color -->
-        <item name="colorSecondary">@color/crowdshift_secondary</item>
-        <item name="colorSecondaryVariant">@color/crowdshift_accent</item>
+        <item name="colorSecondary">@color/secondary_blue</item>
+        <item name="colorSecondaryVariant">@color/secondary_blue_light</item>
         <item name="colorOnSecondary">@color/white</item>
 
         <!-- Status bar color -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/crowdshift_primary</item>
-        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/primary_green</item>
+        <item name="android:navigationBarColor">@color/background_light</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
         <!-- Background colors -->
-        <item name="android:colorBackground">@color/white</item>
+        <item name="android:colorBackground">@color/background_light</item>
         <item name="colorSurface">@color/white</item>
-        <item name="colorOnBackground">@color/black</item>
-        <item name="colorOnSurface">@color/black</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorError">@color/error_red</item>
 
         <!-- Window attributes -->
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/background_light</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowActivityTransitions">true</item>
     </style>
 
     <!-- Splash Screen Theme -->
     <style name="Theme.CrowdShift.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/gradient_start</item>
+        <item name="windowSplashScreenBackground">@drawable/baguio_breathe_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>
         <item name="postSplashScreenTheme">@style/Theme.CrowdShift</item>
+        <item name="android:statusBarColor">@color/gradient_start</item>
+        <item name="android:navigationBarColor">@color/gradient_end</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <!-- WebView specific theme -->
     <style name="Theme.CrowdShift.WebView" parent="Theme.CrowdShift">
-        <item name="android:windowBackground">@color/white</item>
-        <item name="colorPrimary">@color/crowdshift_primary</item>
+        <item name="android:windowBackground">@color/background_light</item>
+        <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorSecondary">@color/secondary_blue</item>
     </style>
 
     <!-- QR Scanner Theme -->
@@ -56,32 +62,45 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <!-- Toolbar Styles -->
+    <style name="ToolbarTitle" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
     <!-- Button Styles -->
     <style name="CrowdShift.Button" parent="Widget.Material3.Button">
         <item name="android:textColor">@color/white</item>
-        <item name="backgroundTint">@color/crowdshift_primary</item>
+        <item name="backgroundTint">@color/primary_green</item>
         <item name="cornerRadius">12dp</item>
         <item name="android:minHeight">48dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="rippleColor">@color/primary_green_light</item>
     </style>
 
     <style name="CrowdShift.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:textColor">@color/crowdshift_primary</item>
-        <item name="strokeColor">@color/crowdshift_primary</item>
+        <item name="android:textColor">@color/primary_green</item>
+        <item name="strokeColor">@color/primary_green</item>
+        <item name="strokeWidth">2dp</item>
         <item name="cornerRadius">12dp</item>
         <item name="android:minHeight">48dp</item>
         <item name="android:textSize">16sp</item>
+        <item name="rippleColor">@color/primary_green_light</item>
     </style>
 
     <!-- Text Input Styles -->
     <style name="CrowdShift.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeColor">@color/crowdshift_primary</item>
-        <item name="hintTextColor">@color/crowdshift_secondary</item>
+        <item name="boxStrokeColor">@color/primary_green</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="hintTextColor">@color/text_hint</item>
         <item name="boxCornerRadiusTopStart">12dp</item>
         <item name="boxCornerRadiusTopEnd">12dp</item>
         <item name="boxCornerRadiusBottomStart">12dp</item>
         <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="android:textColorHint">@color/text_hint</item>
     </style>
 
     <!-- Card Styles -->
@@ -103,14 +122,14 @@
         <item name="android:shadowDx">3</item>
         <item name="android:shadowDy">5</item>
         <item name="android:shadowRadius">10</item>
-        <item name="android:textColor">#0f6635</item>
+        <item name="android:textColor">@color/primary_green</item>
         <item name="android:textSize">42sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <!-- Progress Bar Style -->
     <style name="CustomProgressBar" parent="Widget.AppCompat.ProgressBar">
-        <item name="android:indeterminateTint">@color/crowdshift_primary</item>
+        <item name="android:indeterminateTint">@color/primary_green</item>
         <item name="android:indeterminateTintMode">src_in</item>
     </style>
 
