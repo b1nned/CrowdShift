@@ -159,16 +159,14 @@
 
     </LinearLayout>
 
-    <!-- Toggle Navigation Button -->
+    <!-- Toggle Navigation Button - Moved to top left -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/toggle_nav_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
+        android:layout_gravity="top|start"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_x="13dp"
-        android:layout_y="280dp"
+        android:layout_marginTop="72dp"
         android:elevation="8dp"
         android:src="@drawable/ic_menu"
         app:backgroundTint="@color/primary_green"

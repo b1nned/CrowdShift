@@ -61,8 +61,14 @@ class LoginActivity : AppCompatActivity() {
         setupClickListeners()
         requestPermissions()
 
-        // Auto-login check
-        checkAutoLogin()
+        // Handle logout flag - clear any stored login data
+        if (intent.getBooleanExtra("CLEAR_SAVED_LOGIN", false)) {
+            clearStoredLoginData()
+            showToast("Session expired. Please login again.")
+        } else {
+            // Auto-login check only if we're not being forced to logout
+            checkAutoLogin()
+        }
     }
 
     private fun initializeViews() {
@@ -87,11 +93,24 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun clearStoredLoginData() {
+        sharedPreferences.edit().apply {
+            remove(KEY_BEEP_ID)
+            putBoolean(KEY_IS_LOGGED_IN, false)
+            apply()
+        }
+
+        // Clear the input field
+        beepIdInput.setText("")
+    }
+
+    // Update the checkAutoLogin method to be more robust
     private fun checkAutoLogin() {
         val isLoggedIn = sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false)
         val savedBeepId = sharedPreferences.getString(KEY_BEEP_ID, null)
 
-        if (isLoggedIn && !savedBeepId.isNullOrEmpty()) {
+        // Only auto-login if explicitly logged in AND we have valid credentials
+        if (isLoggedIn && !savedBeepId.isNullOrEmpty() && savedBeepId.length >= 4) {
             showToast("Welcome back!")
             proceedToMainActivity(savedBeepId)
         }
@@ -167,9 +186,13 @@ class LoginActivity : AppCompatActivity() {
         proceedToMainActivity(beepId)
     }
 
+    // Updated proceedToMainActivity method to pass the correct data
     private fun proceedToMainActivity(beepId: String) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("beepId", beepId)
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("CARD_ID", beepId)  // Changed from "beepId" to match MainActivity
+            putExtra("LOGIN_METHOD", "manual")  // Add login method
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
         finish()
     }

@@ -48,152 +48,65 @@
 
         </FrameLayout>
 
-        <!-- CrowdShift Logo with pins -->
+        <!-- CrowdShift Logo Container -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_height="175dp"
+            android:layout_marginBottom="32dp"
             android:gravity="center"
-            android:layout_marginBottom="60dp"
-            android:background="@drawable/logo_container_background"
-            android:padding="24dp"
-            android:elevation="4dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- Pin icons row with floating animation -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+            <!-- Main logo only -->
+            <ImageView
+                android:id="@+id/mainLogo"
+                android:layout_width="380dp"
+                android:layout_height="300dp"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="CrowdShift Logo"
+                android:scaleType="centerInside"
+                android:src="@drawable/lo" />
 
-                <!-- Hotel Pin -->
-                <TextView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/pin_background_red_breathe"
-                    android:gravity="center"
-                    android:text="🏨"
-                    android:textSize="18sp"
-                    android:elevation="2dp" />
+            <!-- App title and tagline -->
 
-                <!-- Location Pin -->
-                <TextView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/pin_background_green_breathe"
-                    android:gravity="center"
-                    android:text="📍"
-                    android:textSize="18sp"
-                    android:elevation="2dp" />
-
-                <!-- Parking Pin -->
-                <TextView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/pin_background_blue_breathe"
-                    android:gravity="center"
-                    android:text="🅿️"
-                    android:textSize="16sp"
-                    android:elevation="2dp" />
-
-                <!-- Transport Pin -->
-                <TextView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/pin_background_purple_breathe"
-                    android:gravity="center"
-                    android:text="🚌"
-                    android:textSize="16sp"
-                    android:elevation="2dp" />
-
-                <!-- Restaurant Pin -->
-                <TextView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/pin_background_pink_breathe"
-                    android:gravity="center"
-                    android:text="🍴"
-                    android:textSize="16sp"
-                    android:elevation="2dp" />
-
-            </LinearLayout>
-
-            <!-- CrowdShift Logo Text with mountain feeling -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CROWDSHIFT"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:textColor="#1B5E20"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="8dp"
-                android:shadowColor="#80FFFFFF"
-                android:shadowDx="0"
-                android:shadowDy="1"
-                android:shadowRadius="2" />
-
-            <!-- Tagline with fresh mountain air feeling -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Less Congestions, More Connections"
-                android:textSize="16sp"
-                android:textColor="#2E7D32"
-                android:gravity="center"
-                android:textStyle="italic"
-                android:alpha="0.9" />
-
-            <!-- Breathe Baguio subtitle -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Breathe Baguio"
-                android:textSize="14sp"
-                android:textColor="#4CAF50"
-                android:gravity="center"
-                android:layout_marginTop="4dp"
-                android:alpha="0.8"
-                android:letterSpacing="0.2" />
 
         </LinearLayout>
 
-        <!-- Login Form with glass morphism effect -->
+        <!-- Login Form Container -->
+
+        <!-- Spacer for bottom -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="24dp"
             android:background="@drawable/glass_morphism_background"
-            android:padding="24dp"
-            android:elevation="6dp">
+            android:elevation="6dp"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <!-- Beep Card ID Input with fresh mountain style -->
+            <!-- Beep Card ID Input -->
             <EditText
                 android:id="@+id/beepIdInput"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="28dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/input_baguio_style"
                 android:hint="Enter Beep Card ID"
+                android:importantForAutofill="no"
                 android:inputType="textNoSuggestions"
                 android:maxLines="1"
                 android:paddingHorizontal="20dp"
-                android:paddingVertical="18dp"
+                android:paddingVertical="16dp"
                 android:textColor="#1B5E20"
                 android:textColorHint="#81C784"
-                android:textSize="16sp"
-                android:elevation="2dp" />
+                android:textSize="16sp" />
 
-            <!-- OR Divider with mountain mist style -->
+            <!-- OR Divider -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="28dp"
+                android:layout_marginBottom="24dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -201,71 +114,68 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="@drawable/gradient_line_baguio" />
+                    android:background="#E0E0E0" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
                     android:text="Or"
                     android:textColor="#4CAF50"
-                    android:textSize="16sp"
-                    android:background="@drawable/or_text_background"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp" />
+                    android:textSize="14sp" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="@drawable/gradient_line_baguio" />
+                    android:background="#E0E0E0" />
 
             </LinearLayout>
 
-            <!-- QR Scanner Button with fresh mountain breeze style -->
+            <!-- QR Scanner Button -->
             <Button
                 android:id="@+id/qrButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="36dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="32dp"
                 android:background="@drawable/button_qr_baguio_style"
+                android:drawableStart="@drawable/ic_qr_code"
+                android:drawablePadding="12dp"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
                 android:text="Scan QR Card"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:elevation="4dp"
-                android:drawableLeft="@drawable/ic_qr_code"
-                android:drawablePadding="12dp"
-                android:gravity="center" />
+                android:textStyle="bold" />
 
-            <!-- Breathe In Button with mountain air essence -->
+            <!-- Breathe In Button -->
             <Button
                 android:id="@+id/breatheInButton"
-                android:layout_width="140dp"
+                android:layout_width="160dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:background="@drawable/button_breathe_baguio"
-                android:text="Breathe in"
+                android:text="Breathe In"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:elevation="8dp"
-                android:shadowColor="#4CAF50"
-                android:shadowDx="0"
-                android:shadowDy="4"
-                android:shadowRadius="8" />
+                android:textStyle="bold" />
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
 
         <!-- Bottom mountain silhouette -->
         <View
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginTop="40dp"
             android:background="@drawable/mountain_silhouette"
-            android:alpha="0.1" />
+            android:alpha="0.15" />
 
     </LinearLayout>
 
