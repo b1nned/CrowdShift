@@ -11,10 +11,13 @@ import androidx.core.content.ContextCompat
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 
 class CrowdShiftJSInterface(private val context: Context) {
 
-    private val mainActivity: MainActivity? get() = if (context is MainActivity) context else null
+    private val mainActivity: MainActivity?
+        get() = if (context is MainActivity) context else null
+
     private val mainHandler = Handler(Looper.getMainLooper())
 
     companion object {
@@ -27,6 +30,7 @@ class CrowdShiftJSInterface(private val context: Context) {
             mainHandler.post {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
+            Log.d(TAG, "Toast shown: $message")
         } catch (e: Exception) {
             Log.e(TAG, "Error showing toast", e)
         }
@@ -35,9 +39,10 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun showLongToast(message: String) {
         try {
-            Handler(Looper.getMainLooper()).post {
+            mainHandler.post {
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
+            Log.d(TAG, "Long toast shown: $message")
         } catch (e: Exception) {
             Log.e(TAG, "Error showing long toast", e)
         }
@@ -49,6 +54,7 @@ class CrowdShiftJSInterface(private val context: Context) {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
+            Log.d(TAG, "External URL opened: $url")
         } catch (e: Exception) {
             Log.e(TAG, "Error opening external URL: $url", e)
             showToast("Cannot open link")
@@ -63,6 +69,7 @@ class CrowdShiftJSInterface(private val context: Context) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
+            Log.d(TAG, "App settings opened")
         } catch (e: Exception) {
             Log.e(TAG, "Error opening settings", e)
             showToast("Cannot open settings")
@@ -73,8 +80,10 @@ class CrowdShiftJSInterface(private val context: Context) {
     fun isLocationEnabled(): Boolean {
         return try {
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+            val isEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                     locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            Log.d(TAG, "Location enabled: $isEnabled")
+            isEnabled
         } catch (e: Exception) {
             Log.e(TAG, "Error checking location status", e)
             false
@@ -88,6 +97,7 @@ class CrowdShiftJSInterface(private val context: Context) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
+            Log.d(TAG, "Location settings opened")
         } catch (e: Exception) {
             Log.e(TAG, "Error opening location settings", e)
             showToast("Cannot open location settings")
@@ -97,6 +107,7 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun getDeviceInfo(): String {
         return try {
+            val displayMetrics = context.resources.displayMetrics
             """
             {
                 "platform": "Android",
@@ -107,9 +118,11 @@ class CrowdShiftJSInterface(private val context: Context) {
                 "cardId": "${getCardId()}",
                 "loginMethod": "${getLoginMethod()}",
                 "isNativeApp": true,
-                "screenWidth": ${context.resources.displayMetrics.widthPixels},
-                "screenHeight": ${context.resources.displayMetrics.heightPixels},
-                "density": ${context.resources.displayMetrics.density}
+                "screenWidth": ${displayMetrics.widthPixels},
+                "screenHeight": ${displayMetrics.heightPixels},
+                "density": ${displayMetrics.density},
+                "scaledDensity": ${displayMetrics.scaledDensity},
+                "timestamp": ${System.currentTimeMillis()}
             }
             """.trimIndent()
         } catch (e: Exception) {
@@ -121,19 +134,23 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun vibrate(duration: Long = 100) {
         try {
-            Handler(Looper.getMainLooper()).post {
+            mainHandler.post {
                 val vibrator = ContextCompat.getSystemService(context, android.os.Vibrator::class.java)
+                val safeDuration = duration.coerceIn(10, 1000)
+
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     vibrator?.vibrate(
                         android.os.VibrationEffect.createOneShot(
-                            duration.coerceIn(10, 1000), // Limit duration between 10ms and 1s
+                            safeDuration,
                             android.os.VibrationEffect.DEFAULT_AMPLITUDE
                         )
                     )
                 } else {
                     @Suppress("DEPRECATION")
-                    vibrator?.vibrate(duration.coerceIn(10, 1000))
+                    vibrator?.vibrate(safeDuration)
                 }
+
+                Log.d(TAG, "Vibration triggered: ${safeDuration}ms")
             }
         } catch (e: Exception) {
             Log.w(TAG, "Vibration not available", e)
@@ -143,21 +160,26 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun shareContent(title: String, text: String, url: String = "") {
         try {
-            Handler(Looper.getMainLooper()).post {
+            mainHandler.post {
                 val shareText = if (url.isNotEmpty()) "$text\n$url" else text
                 val shareIntent = Intent().apply {
                     action = Intent.ACTION_SEND
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TITLE, title)
                     putExtra(Intent.EXTRA_TEXT, shareText)
+                    putExtra(Intent.EXTRA_SUBJECT, title)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
 
                 try {
-                    context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+                    val chooser = Intent.createChooser(shareIntent, "Share via")
+                    chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(chooser)
                 } catch (e: Exception) {
                     context.startActivity(shareIntent)
                 }
+
+                Log.d(TAG, "Content shared: $title")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error sharing content", e)
@@ -168,6 +190,7 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun logout() {
         try {
+            Log.d(TAG, "Logout requested from web")
             val activity = mainActivity
             activity?.runOnUiThread {
                 activity.performLogout()
@@ -181,6 +204,7 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun refreshPage() {
         try {
+            Log.d(TAG, "Page refresh requested")
             val activity = mainActivity
             activity?.runOnUiThread {
                 activity.webView.reload()
@@ -194,6 +218,7 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun openQRScanner() {
         try {
+            Log.d(TAG, "QR scanner requested")
             val activity = mainActivity
             activity?.runOnUiThread {
                 activity.startQRScanner()
@@ -207,6 +232,7 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun goBack() {
         try {
+            Log.d(TAG, "Go back requested")
             val activity = mainActivity
             activity?.runOnUiThread {
                 if (activity.webView.canGoBack()) {
@@ -224,6 +250,7 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun setTitle(title: String) {
         try {
+            Log.d(TAG, "Title change requested: $title")
             val activity = mainActivity
             activity?.runOnUiThread {
                 activity.supportActionBar?.title = title
@@ -241,18 +268,7 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun trackEvent(eventName: String, eventData: String = "") {
         try {
-            // Log events for analytics (integrate with Firebase Analytics here if needed)
-            Log.d("CrowdShiftAnalytics", "Event: $eventName, Data: $eventData")
-
-            // You can add more sophisticated analytics tracking here
-            val eventInfo = """
-                Event: $eventName
-                Data: $eventData
-                Timestamp: ${System.currentTimeMillis()}
-                User: ${getCardId()}
-            """.trimIndent()
-
-            Log.i(TAG, "Analytics: $eventInfo")
+            Log.i("CrowdShiftAnalytics", "Event: $eventName, Data: $eventData")
         } catch (e: Exception) {
             Log.e(TAG, "Error tracking event", e)
         }
@@ -276,7 +292,7 @@ class CrowdShiftJSInterface(private val context: Context) {
         return try {
             val prefs = context.getSharedPreferences("crowdshift_web_storage", Context.MODE_PRIVATE)
             val value = prefs.getString(key, null)
-            Log.d(TAG, "Retrieved from storage: $key = ${if (value != null) "***" else "null"}")
+            Log.d(TAG, "Retrieved from storage: $key")
             value
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get from storage: $key", e)
@@ -324,13 +340,15 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun showNativeDialog(title: String, message: String, positiveButton: String = "OK") {
         try {
-            mainActivity?.runOnUiThread {
-                androidx.appcompat.app.AlertDialog.Builder(context)
+            mainHandler.post {
+                AlertDialog.Builder(context)
                     .setTitle(title)
                     .setMessage(message)
                     .setPositiveButton(positiveButton, null)
+                    .setCancelable(true)
                     .show()
             }
+            Log.d(TAG, "Native dialog shown: $title")
         } catch (e: Exception) {
             Log.e(TAG, "Error showing native dialog", e)
             showToast(message)
@@ -351,6 +369,7 @@ class CrowdShiftJSInterface(private val context: Context) {
             }
 
             context.startActivity(intent)
+            Log.d(TAG, "Map opened: $latitude, $longitude")
         } catch (e: Exception) {
             Log.e(TAG, "Error opening map", e)
             showToast("Cannot open map")
@@ -360,12 +379,13 @@ class CrowdShiftJSInterface(private val context: Context) {
     @JavascriptInterface
     fun copyToClipboard(text: String) {
         try {
-            Handler(Looper.getMainLooper()).post {
+            mainHandler.post {
                 val clipboard = ContextCompat.getSystemService(context, android.content.ClipboardManager::class.java)
                 val clip = android.content.ClipData.newPlainText("CrowdShift", text)
                 clipboard?.setPrimaryClip(clip)
                 showToast("Copied to clipboard")
             }
+            Log.d(TAG, "Text copied to clipboard")
         } catch (e: Exception) {
             Log.e(TAG, "Error copying to clipboard", e)
             showToast("Cannot copy to clipboard")
@@ -401,6 +421,104 @@ class CrowdShiftJSInterface(private val context: Context) {
             Log.e(TAG, "Error getting network type", e)
             "unknown"
         }
+    }
+
+    @JavascriptInterface
+    fun isNetworkAvailable(): Boolean {
+        return try {
+            val connectivityManager = ContextCompat.getSystemService(context, android.net.ConnectivityManager::class.java)
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                val activeNetwork = connectivityManager?.activeNetwork
+                val networkCapabilities = connectivityManager?.getNetworkCapabilities(activeNetwork)
+                networkCapabilities?.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+            } else {
+                @Suppress("DEPRECATION")
+                val activeNetworkInfo = connectivityManager?.activeNetworkInfo
+                activeNetworkInfo?.isConnected == true
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking network availability", e)
+            false
+        }
+    }
+
+    @JavascriptInterface
+    fun getBatteryLevel(): Int {
+        return try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                val batteryManager = ContextCompat.getSystemService(context, android.os.BatteryManager::class.java)
+                batteryManager?.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: -1
+            } else {
+                -1
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting battery level", e)
+            -1
+        }
+    }
+
+    @JavascriptInterface
+    fun openDialer(phoneNumber: String = "") {
+        try {
+            val uri = if (phoneNumber.isNotEmpty()) "tel:$phoneNumber" else "tel:"
+            val intent = Intent(Intent.ACTION_DIAL, Uri.parse(uri)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+            Log.d(TAG, "Dialer opened: $phoneNumber")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error opening dialer", e)
+            showToast("Cannot open dialer")
+        }
+    }
+
+    @JavascriptInterface
+    fun sendEmail(to: String = "", subject: String = "", body: String = "") {
+        try {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:$to")
+                if (subject.isNotEmpty()) putExtra(Intent.EXTRA_SUBJECT, subject)
+                if (body.isNotEmpty()) putExtra(Intent.EXTRA_TEXT, body)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            context.startActivity(Intent.createChooser(intent, "Send email"))
+            Log.d(TAG, "Email intent opened: $to")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error opening email", e)
+            showToast("Cannot open email")
+        }
+    }
+
+    @JavascriptInterface
+    fun getStorageKeys(): String {
+        return try {
+            val prefs = context.getSharedPreferences("crowdshift_web_storage", Context.MODE_PRIVATE)
+            val keys = prefs.all.keys.toList()
+            val jsonKeys = keys.joinToString("\", \"", "[\"", "\"]")
+            Log.d(TAG, "Storage keys retrieved: ${keys.size} keys")
+            jsonKeys
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting storage keys", e)
+            "[]"
+        }
+    }
+
+    @JavascriptInterface
+    fun logDebug(message: String) {
+        Log.d("WebView", message)
+    }
+
+    @JavascriptInterface
+    fun logError(message: String) {
+        Log.e("WebView", message)
+    }
+
+    @JavascriptInterface
+    fun notifyFeatureUnavailable(featureName: String) {
+        showToast("$featureName is not available in this version")
+        Log.w(TAG, "Feature unavailable: $featureName")
     }
 
     private fun getAppVersion(): String {

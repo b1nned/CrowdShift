@@ -33,7 +33,7 @@ import com.journeyapps.barcodescanner.ScanOptions
 class MainActivity : AppCompatActivity() {
 
     // UI Components
-    lateinit var webView: WebView // Made public for CrowdShiftJSInterface access
+    lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var toolbar: MaterialToolbar
@@ -139,16 +139,184 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupSwipeRefresh() {
+        // Configure refresh colors
+        swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(this, R.color.primary_green),
+            ContextCompat.getColor(this, R.color.secondary_blue),
+            ContextCompat.getColor(this, R.color.accent_orange)
+        )
+
+        // Set refresh action
         swipeRefreshLayout.setOnRefreshListener {
+            Log.d(TAG, "Pull-to-refresh triggered")
             webView.reload()
             resetAutoLogoutTimer()
         }
+
+        // CRITICAL FIX: Only allow refresh when at the absolute top
+        swipeRefreshLayout.setOnChildScrollUpCallback { parent, child ->
+            // Return true if child can scroll up (prevents refresh)
+            // Return false only when at the very top (allows refresh)
+            if (child is WebView) {
+                child.scrollY > 0
+            } else {
+                false
+            }
+        }
+
+        // Additional control: Monitor WebView scroll position
+        webView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            // Enable refresh only when at the absolute top
+            val isAtTop = scrollY == 0
+            swipeRefreshLayout.isEnabled = isAtTop
+
+            // Debug logging (remove in production)
+            if (isAtTop && !swipeRefreshLayout.isEnabled) {
+                Log.d(TAG, "SwipeRefresh enabled - at top position")
+            } else if (!isAtTop && swipeRefreshLayout.isEnabled) {
+                Log.d(TAG, "SwipeRefresh disabled - scrolled down")
+            }
+
+            // Reset auto-logout timer on any scroll
+            resetAutoLogoutTimer()
+        }
+
+        // Set initial state
+        swipeRefreshLayout.isEnabled = true
+    }
+
+    // Alternative method if you want even more control:
+    private fun setupAdvancedSwipeRefresh() {
+        var isRefreshAllowed = true
+        var lastScrollY = 0
 
         swipeRefreshLayout.setColorSchemeColors(
             ContextCompat.getColor(this, R.color.primary_green),
             ContextCompat.getColor(this, R.color.secondary_blue),
             ContextCompat.getColor(this, R.color.accent_orange)
         )
+
+        swipeRefreshLayout.setOnRefreshListener {
+            if (isRefreshAllowed) {
+                Log.d(TAG, "Refresh allowed - reloading page")
+                webView.reload()
+                resetAutoLogoutTimer()
+            } else {
+                Log.d(TAG, "Refresh blocked - not at top")
+                swipeRefreshLayout.isRefreshing = false
+            }
+        }
+
+        // Precise scroll tracking
+        webView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            lastScrollY = scrollY
+
+            // Only allow refresh when exactly at the top
+            isRefreshAllowed = scrollY == 0
+            swipeRefreshLayout.isEnabled = isRefreshAllowed
+
+            // Prevent accidental refresh when scrolling back to top
+            if (scrollY == 0 && oldScrollY > 0) {
+                // Just reached the top - add small delay before enabling refresh
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (webView.scrollY == 0) {
+                        swipeRefreshLayout.isEnabled = true
+                        Log.d(TAG, "Refresh enabled after reaching top")
+                    }
+                }, 200) // 200ms delay
+            }
+
+            resetAutoLogoutTimer()
+        }
+
+        // Handle edge cases with touch events
+        swipeRefreshLayout.setOnChildScrollUpCallback { _, _ ->
+            val canScrollUp = webView.scrollY > 0
+            Log.d(TAG, "CanScrollUp check: $canScrollUp (scrollY: ${webView.scrollY})")
+            canScrollUp
+        }
+    }
+
+    // Enhanced version with touch event handling (most robust solution)
+    private fun setupRobustSwipeRefresh() {
+        var isAtTop = true
+        var touchStartY = 0f
+        var isRefreshGesture = false
+
+        swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(this, R.color.primary_green),
+            ContextCompat.getColor(this, R.color.secondary_blue),
+            ContextCompat.getColor(this, R.color.accent_orange)
+        )
+
+        swipeRefreshLayout.setOnRefreshListener {
+            Log.d(TAG, "Refresh triggered - reloading page")
+            webView.reload()
+            resetAutoLogoutTimer()
+        }
+
+        // Monitor WebView scroll position
+        webView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            isAtTop = scrollY == 0
+
+            // Enable/disable swipe refresh based on position
+            swipeRefreshLayout.isEnabled = isAtTop
+
+            Log.d(TAG, "Scroll: Y=$scrollY, isAtTop=$isAtTop, refreshEnabled=${swipeRefreshLayout.isEnabled}")
+            resetAutoLogoutTimer()
+        }
+
+        // Critical callback - this is what actually controls refresh availability
+        swipeRefreshLayout.setOnChildScrollUpCallback { parent, child ->
+            when (child) {
+                is WebView -> {
+                    val canScrollUp = child.scrollY > 0
+                    Log.d(TAG, "Child scroll up check: canScrollUp=$canScrollUp, scrollY=${child.scrollY}")
+                    canScrollUp
+                }
+                else -> false
+            }
+        }
+
+        // Optional: Handle touch events for even more precise control
+        webView.setOnTouchListener { _, event ->
+            when (event.action) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    touchStartY = event.y
+                    isRefreshGesture = false
+                }
+                android.view.MotionEvent.ACTION_MOVE -> {
+                    val deltaY = event.y - touchStartY
+                    // Only consider it a refresh gesture if starting from top and moving down
+                    isRefreshGesture = isAtTop && deltaY > 50 && webView.scrollY == 0
+                }
+            }
+            false // Don't consume the event
+        }
+    }
+
+    // Simple and effective solution (recommended)
+    private fun setupSimpleSwipeRefresh() {
+        swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(this, R.color.primary_green),
+            ContextCompat.getColor(this, R.color.secondary_blue),
+            ContextCompat.getColor(this, R.color.accent_orange)
+        )
+
+        swipeRefreshLayout.setOnRefreshListener {
+            webView.reload()
+            resetAutoLogoutTimer()
+        }
+
+        // The key fix: This callback determines when refresh is allowed
+        swipeRefreshLayout.setOnChildScrollUpCallback { _, child ->
+            // If child is WebView and can scroll up, prevent refresh
+            if (child is WebView) {
+                child.scrollY > 0  // true = can scroll up (no refresh), false = at top (allow refresh)
+            } else {
+                false
+            }
+        }
     }
 
     private fun setupNavigationToggle() {
@@ -269,37 +437,102 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Setup all floating navigation button click handlers
+     * Enhanced floating navigation with better targeting and fallbacks
      */
     private fun setupFloatingNavigation() {
-        // Dashboard - scroll to top and refresh data
+        // Dashboard - intelligent refresh and navigation
         findViewById<ImageButton>(R.id.nav_dashboard).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                    if (typeof refreshDashboard === 'function') {
-                        refreshDashboard();
+                    try {
+                        // Multiple strategies to return to dashboard
+                        
+                        // Strategy 1: Look for dashboard elements
+                        const dashboardElements = document.querySelectorAll(`
+                            [id*="dashboard"], [class*="dashboard"], [data-page="dashboard"],
+                            .main-content, .home, [role="main"], main
+                        `);
+                        
+                        if (dashboardElements.length > 0) {
+                            dashboardElements[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        } else {
+                            // Strategy 2: Scroll to top
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                        
+                        // Strategy 3: Refresh data if functions exist
+                        if (typeof refreshDashboard === 'function') refreshDashboard();
+                        if (typeof updateCityStatus === 'function') updateCityStatus();
+                        if (typeof loadRecommendations === 'function') loadRecommendations();
+                        
+                        // Strategy 4: Trigger refresh on elements
+                        document.querySelectorAll('[data-refresh], [id$="-refresh"], .refresh-btn').forEach(btn => {
+                            if (btn.click) btn.click();
+                        });
+                        
+                        return 'dashboard_accessed';
+                    } catch(e) {
+                        console.error('Dashboard navigation error:', e);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        return 'dashboard_fallback';
                     }
-                    return 'dashboard_accessed';
                 })()
             """)
             hideNavigationWithAnimation()
         }
 
-        // City Status - navigate to city status section
+        // City Status - enhanced targeting
         findViewById<ImageButton>(R.id.nav_city_status).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    const selectors = ['#city-status', '[class*="city-status"]', '.city-status-card'];
-                    for (let selector of selectors) {
-                        const element = document.querySelector(selector);
-                        if (element) {
-                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            return 'city_status_found';
+                    try {
+                        // Enhanced selector strategy
+                        const cityStatusSelectors = [
+                            '#city-status', '.city-status', '[data-section="city-status"]',
+                            '.city-status-card', '[class*="city-status"]', '[id*="city-status"]',
+                            'section:has-text("City Status")', '[data-testid*="city"]'
+                        ];
+                        
+                        for (let selector of cityStatusSelectors) {
+                            try {
+                                const element = document.querySelector(selector);
+                                if (element && element.offsetParent !== null) { // Check if visible
+                                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    
+                                    // Highlight the section briefly
+                                    element.style.transition = 'background-color 0.5s';
+                                    element.style.backgroundColor = '#E8F5E9';
+                                    setTimeout(() => {
+                                        element.style.backgroundColor = '';
+                                    }, 1000);
+                                    
+                                    return 'city_status_found_' + selector;
+                                }
+                            } catch(e) {
+                                console.log('Selector failed:', selector, e);
+                            }
                         }
+                        
+                        // Fallback: look for text content
+                        const textElements = Array.from(document.querySelectorAll('*')).filter(el => {
+                            return el.textContent.toLowerCase().includes('city status') && 
+                                   el.offsetParent !== null &&
+                                   el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE';
+                        });
+                        
+                        if (textElements.length > 0) {
+                            textElements[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            return 'city_status_text_found';
+                        }
+                        
+                        // Ultimate fallback
+                        window.scrollTo({ top: document.body.scrollHeight * 0.2, behavior: 'smooth' });
+                        return 'city_status_scroll_fallback';
+                        
+                    } catch(e) {
+                        console.error('City status navigation error:', e);
+                        return 'city_status_error';
                     }
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                    return 'city_status_fallback';
                 })()
             """)
             hideNavigationWithAnimation()
@@ -311,145 +544,328 @@ class MainActivity : AppCompatActivity() {
             hideNavigationWithAnimation()
         }
 
-        // Top Up - find and trigger top-up functionality
+        // Top Up - enhanced detection and triggering
         findViewById<ImageButton>(R.id.nav_top_up).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    const topupSelectors = [
-                        '[data-action="topup"]', '.js-topup-open', 
-                        '.feature-button:contains("Top-Up")', '[class*="topup"]'
-                    ];
-                    
-                    for (let selector of topupSelectors) {
-                        const btn = document.querySelector(selector);
-                        if (btn) {
-                            btn.click();
-                            return 'topup_triggered';
+                    try {
+                        // Enhanced top-up detection
+                        const topupSelectors = [
+                            '[data-action="topup"]', '.js-topup-open', '[class*="topup"]',
+                            'button:contains("Top Up")', 'button:contains("Top-up")', 
+                            'button:contains("Add Balance")', '[id*="topup"]',
+                            '.feature-button[data-feature="topup"]',
+                            'a[href*="topup"]'
+                        ];
+                        
+                        for (let selector of topupSelectors) {
+                            try {
+                                const element = document.querySelector(selector);
+                                if (element && element.offsetParent !== null) {
+                                    if (element.click) {
+                                        element.click();
+                                        return 'topup_clicked_' + selector;
+                                    }
+                                }
+                            } catch(e) {
+                                console.log('Topup selector failed:', selector, e);
+                            }
                         }
+                        
+                        // Enhanced text-based search
+                        const textButtons = Array.from(document.querySelectorAll('button, a, [role="button"]')).filter(btn => {
+                            const text = btn.textContent.toLowerCase().trim();
+                            return (text.includes('top') && text.includes('up')) ||
+                                   text.includes('add balance') ||
+                                   text.includes('reload') ||
+                                   text.includes('charge');
+                        });
+                        
+                        if (textButtons.length > 0) {
+                            textButtons[0].click();
+                            return 'topup_text_clicked';
+                        }
+                        
+                        // Look for quick actions section
+                        const quickActionsSelectors = [
+                            '#quick-actions', '.quick-actions', '[class*="quick-action"]',
+                            '.feature-grid', '[data-section="actions"]'
+                        ];
+                        
+                        for (let selector of quickActionsSelectors) {
+                            const element = document.querySelector(selector);
+                            if (element) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                return 'quick_actions_scrolled';
+                            }
+                        }
+                        
+                        // Show native top-up if available
+                        if (window.CrowdShiftAndroid) {
+                            window.CrowdShiftAndroid.showToast('Top-up feature coming soon! Use quick actions below.');
+                            window.scrollTo({ top: document.body.scrollHeight * 0.7, behavior: 'smooth' });
+                            return 'native_topup_message';
+                        }
+                        
+                        return 'topup_not_found';
+                        
+                    } catch(e) {
+                        console.error('Top-up navigation error:', e);
+                        return 'topup_error';
                     }
-                    
-                    // Fallback: scroll to quick actions
-                    const quickActions = document.querySelector('#quick-actions, [class*="quick-action"]');
-                    if (quickActions) {
-                        quickActions.scrollIntoView({ behavior: 'smooth' });
-                        return 'quick_actions_scrolled';
-                    }
-                    
-                    return 'topup_not_found';
                 })()
             """)
             hideNavigationWithAnimation()
         }
 
-        // Shuttle Routes - navigate to shuttle information
+        // Shuttle Routes - enhanced navigation
         findViewById<ImageButton>(R.id.nav_shuttle_routes).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    const shuttleSelectors = ['#shuttle-routes', '[class*="shuttle"]', '.feature-button:contains("Shuttle")'];
-                    for (let selector of shuttleSelectors) {
-                        const element = document.querySelector(selector);
-                        if (element) {
-                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            return 'shuttle_section_found';
+                    try {
+                        const shuttleSelectors = [
+                            '#shuttle-routes', '.shuttle-routes', '[data-section="shuttle"]',
+                            '[class*="shuttle"]', '[id*="shuttle"]', '[data-feature="shuttle"]'
+                        ];
+                        
+                        for (let selector of shuttleSelectors) {
+                            const element = document.querySelector(selector);
+                            if (element && element.offsetParent !== null) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                return 'shuttle_section_found';
+                            }
                         }
+                        
+                        // Look for text-based shuttle elements
+                        const textElements = Array.from(document.querySelectorAll('*')).filter(el => {
+                            const text = el.textContent.toLowerCase();
+                            return (text.includes('shuttle') || text.includes('bus') || text.includes('transport')) &&
+                                   el.offsetParent !== null &&
+                                   text.length < 200; // Avoid large paragraphs
+                        });
+                        
+                        if (textElements.length > 0) {
+                            textElements[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            return 'shuttle_text_found';
+                        }
+                        
+                        // Show comprehensive shuttle information
+                        if (window.CrowdShiftAndroid) {
+                            window.CrowdShiftAndroid.showNativeDialog(
+                                'Shuttle Routes',
+                                'Available Routes:\\n\\n🚌 Route 1: City Center ↔ Tourist Spots\\n   Every 15 minutes\\n\\n🚌 Route 2: Hotels ↔ Shopping Areas\\n   Every 20 minutes\\n\\n🚌 Route 3: Airport ↔ Session Road\\n   Every 30 minutes\\n\\nTap any shuttle booking button in the app to reserve your seat!'
+                            );
+                        }
+                        
+                        return 'shuttle_info_displayed';
+                        
+                    } catch(e) {
+                        console.error('Shuttle navigation error:', e);
+                        return 'shuttle_error';
                     }
-                    
-                    // Show shuttle information as fallback
-                    alert('🚌 Shuttle Routes\\n\\n• Every 10-20 minutes from major terminals\\n• Route 1: City Center → Tourist Spots\\n• Route 2: Hotels → Shopping Areas\\n• Check real-time schedules in app');
-                    return 'shuttle_info_displayed';
                 })()
             """)
             hideNavigationWithAnimation()
         }
 
-        // Find Parking - navigate to parking section
+        // Find Parking - enhanced parking navigation
         findViewById<ImageButton>(R.id.nav_find_parking).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    const parkingSelectors = ['#parking-availability', '[class*="parking"]', '.feature-button:contains("Parking")'];
-                    for (let selector of parkingSelectors) {
-                        const element = document.querySelector(selector);
-                        if (element) {
-                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            return 'parking_section_found';
+                    try {
+                        const parkingSelectors = [
+                            '#parking-availability', '#parking', '.parking-availability',
+                            '[data-section="parking"]', '[class*="parking"]', '[id*="parking"]'
+                        ];
+                        
+                        for (let selector of parkingSelectors) {
+                            const element = document.querySelector(selector);
+                            if (element && element.offsetParent !== null) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                
+                                // Highlight parking section
+                                element.style.transition = 'box-shadow 0.5s';
+                                element.style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.5)';
+                                setTimeout(() => {
+                                    element.style.boxShadow = '';
+                                }, 2000);
+                                
+                                return 'parking_section_found';
+                            }
                         }
+                        
+                        // Show parking information with current status
+                        if (window.CrowdShiftAndroid) {
+                            window.CrowdShiftAndroid.showNativeDialog(
+                                'Parking Availability',
+                                '🅿️ Real-time Parking Status:\\n\\n📍 Burnham Park\\n   Available: 85/150 slots\\n   Rate: ₱25/hour\\n\\n📍 Session Road\\n   Available: 12/80 slots\\n   Rate: ₱40/hour\\n\\n📍 SM Baguio\\n   Available: 245/300 slots\\n   Rate: ₱30/hour\\n\\nScroll down to find parking reservation buttons!'
+                            );
+                        }
+                        
+                        // Scroll to likely parking section
+                        window.scrollTo({ top: document.body.scrollHeight * 0.6, behavior: 'smooth' });
+                        
+                        return 'parking_info_displayed';
+                        
+                    } catch(e) {
+                        console.error('Parking navigation error:', e);
+                        return 'parking_error';
                     }
-                    
-                    // Show parking information as fallback
-                    alert('🅿️ Available Parking\\n\\n• Burnham Park: 120/150 slots\\n• Session Road: 45/80 slots\\n• SM Baguio: 200/300 slots\\n• Rates: ₱20-40/hour');
-                    return 'parking_info_displayed';
                 })()
             """)
             hideNavigationWithAnimation()
         }
 
-        // Tourist Spots - navigate to recommendations
+        // Tourist Spots - enhanced recommendations navigation
         findViewById<ImageButton>(R.id.nav_tourist_spots).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    const recoSelectors = ['#smart-recommendations', '[class*="recommendation"]', '[class*="tourist"]'];
-                    for (let selector of recoSelectors) {
-                        const element = document.querySelector(selector);
-                        if (element) {
-                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            return 'recommendations_found';
+                    try {
+                        const recoSelectors = [
+                            '#smart-recommendations', '.smart-recommendations', 
+                            '#recommendations', '.recommendations',
+                            '[data-section="recommendations"]', '[class*="recommendation"]',
+                            '[class*="tourist"]', '[id*="tourist"]', '.curated-spots'
+                        ];
+                        
+                        for (let selector of recoSelectors) {
+                            const element = document.querySelector(selector);
+                            if (element && element.offsetParent !== null) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                
+                                // Animate recommendation cards if they exist
+                                const cards = element.querySelectorAll('[class*="card"], [class*="item"]');
+                                cards.forEach((card, index) => {
+                                    setTimeout(() => {
+                                        card.style.transform = 'scale(1.02)';
+                                        card.style.transition = 'transform 0.3s';
+                                        setTimeout(() => {
+                                            card.style.transform = 'scale(1)';
+                                        }, 300);
+                                    }, index * 100);
+                                });
+                                
+                                return 'recommendations_found';
+                            }
                         }
+                        
+                        // Look for tourist-related text
+                        const textElements = Array.from(document.querySelectorAll('*')).filter(el => {
+                            const text = el.textContent.toLowerCase();
+                            return (text.includes('tourist') || text.includes('recommendation') || 
+                                   text.includes('spot') || text.includes('attraction')) &&
+                                   el.offsetParent !== null && 
+                                   text.length < 300;
+                        });
+                        
+                        if (textElements.length > 0) {
+                            textElements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return 'tourist_text_found';
+                        }
+                        
+                        // Scroll to middle area where recommendations typically are
+                        const middleY = document.body.scrollHeight * 0.45;
+                        window.scrollTo({ top: middleY, behavior: 'smooth' });
+                        
+                        return 'recommendations_middle_scroll';
+                        
+                    } catch(e) {
+                        console.error('Recommendations navigation error:', e);
+                        return 'recommendations_error';
                     }
-                    
-                    // Scroll to middle of page where recommendations likely are
-                    window.scrollTo({ top: document.body.scrollHeight * 0.4, behavior: 'smooth' });
-                    return 'recommendations_fallback_scroll';
                 })()
             """)
             hideNavigationWithAnimation()
         }
 
-        // Settings - trigger settings modal or fallback
+        // Settings - enhanced settings access
         findViewById<ImageButton>(R.id.nav_settings).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    const settingsSelectors = ['[data-action="settings"]', '.js-qa[data-action="settings"]', '#settings-modal'];
-                    for (let selector of settingsSelectors) {
-                        const btn = document.querySelector(selector);
-                        if (btn) {
-                            if (btn.id === 'settings-modal') {
-                                btn.style.display = 'flex';
-                            } else {
-                                btn.click();
+                    try {
+                        const settingsSelectors = [
+                            '[data-action="settings"]', '.js-qa[data-action="settings"]',
+                            '#settings-modal', '.settings-modal', '[id*="settings"]',
+                            'button:contains("Settings")', '[class*="settings"]'
+                        ];
+                        
+                        for (let selector of settingsSelectors) {
+                            const element = document.querySelector(selector);
+                            if (element) {
+                                if (element.id && element.id.includes('modal')) {
+                                    element.style.display = 'flex';
+                                    return 'settings_modal_opened';
+                                } else if (element.click) {
+                                    element.click();
+                                    return 'settings_clicked';
+                                }
                             }
-                            return 'settings_opened';
                         }
+                        
+                        // Show native settings dialog
+                        if (window.CrowdShiftAndroid) {
+                            const confirmed = confirm('⚙️ Settings\\n\\nOpen device settings to manage app permissions and preferences?');
+                            if (confirmed) {
+                                window.CrowdShiftAndroid.openSettings();
+                            }
+                            return 'native_settings_prompted';
+                        }
+                        
+                        return 'settings_not_found';
+                        
+                    } catch(e) {
+                        console.error('Settings navigation error:', e);
+                        return 'settings_error';
                     }
-                    
-                    if (confirm('⚙️ Settings\\n\\nOpen device settings to manage app permissions and preferences?')) {
-                        CrowdShiftAndroid.openSettings();
-                    }
-                    return 'settings_fallback';
                 })()
             """)
             hideNavigationWithAnimation()
         }
 
-        // Help - show help information
+        // Help - comprehensive help system
         findViewById<ImageButton>(R.id.nav_help).setOnClickListener {
             executeWebViewScript("""
                 (function() {
-                    const helpSelectors = ['[data-action="help"]', '.js-qa[data-action="help"]', '#help-modal'];
-                    for (let selector of helpSelectors) {
-                        const btn = document.querySelector(selector);
-                        if (btn) {
-                            if (btn.id === 'help-modal') {
-                                btn.style.display = 'flex';
-                            } else {
-                                btn.click();
+                    try {
+                        const helpSelectors = [
+                            '[data-action="help"]', '.js-qa[data-action="help"]',
+                            '#help-modal', '.help-modal', '[id*="help"]'
+                        ];
+                        
+                        for (let selector of helpSelectors) {
+                            const element = document.querySelector(selector);
+                            if (element) {
+                                if (element.id && element.id.includes('modal')) {
+                                    element.style.display = 'flex';
+                                    return 'help_modal_opened';
+                                } else if (element.click) {
+                                    element.click();
+                                    return 'help_clicked';
+                                }
                             }
-                            return 'help_modal_opened';
                         }
+                        
+                        // Show comprehensive help
+                        if (window.CrowdShiftAndroid) {
+                            window.CrowdShiftAndroid.showNativeDialog(
+                                'CrowdShift Help',
+                                '📱 How to use CrowdShift:\\n\\n' +
+                                '🎫 Smart Cards: Tap buttons to purchase and manage cards\\n\\n' +
+                                '📊 City Status: View real-time crowd data and congestion levels\\n\\n' +
+                                '🚌 Shuttles: Book seats in advance for better rates and guaranteed spots\\n\\n' +
+                                '📱 QR Codes: Scan QR codes for quick actions and payments\\n\\n' +
+                                '🅿️ Parking: Check live availability and reserve spots ahead of time\\n\\n' +
+                                '📍 Navigation: Get optimized routes that avoid crowded areas\\n\\n' +
+                                '💡 Tips: Pull down to refresh data, use the floating menu for quick access!'
+                            );
+                        }
+                        
+                        return 'help_info_displayed';
+                        
+                    } catch(e) {
+                        console.error('Help navigation error:', e);
+                        return 'help_error';
                     }
-                    
-                    // Show comprehensive help information
-                    alert('❓ CrowdShift Help\\n\\n🎫 Smart Cards: Tap for discounts\\n📊 City Status: Real-time crowd data\\n🚌 Shuttles: Book in advance for better rates\\n📱 QR Codes: Scan for quick actions\\n🅿️ Parking: Live availability updates\\n📍 Navigation: Optimized routes to avoid crowds');
-                    return 'help_info_displayed';
                 })()
             """)
             hideNavigationWithAnimation()
@@ -480,6 +896,13 @@ class MainActivity : AppCompatActivity() {
                 Developed to reduce congestion and improve visitor experience through real-time data and intelligent routing.
                 
                 "Less Congestions, More Connections"
+                
+                Features:
+                • Real-time crowd monitoring
+                • Smart route optimization
+                • Integrated payment system
+                • Tourist spot recommendations
+                • Parking availability tracking
             """.trimIndent())
             .setPositiveButton("OK", null)
             .show()
@@ -494,11 +917,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Execute JavaScript in WebView with error handling
+     * Execute JavaScript in WebView with enhanced error handling and logging
      */
     private fun executeWebViewScript(script: String, callback: ValueCallback<String>? = null) {
         try {
-            webView.evaluateJavascript("javascript:$script", callback)
+            val wrappedScript = """
+                javascript:(function() {
+                    try {
+                        console.log('Executing navigation script...');
+                        $script
+                    } catch(e) {
+                        console.error('Script execution error:', e);
+                        return 'script_error: ' + e.message;
+                    }
+                })()
+            """.trimIndent()
+
+            webView.evaluateJavascript(wrappedScript) { result ->
+                Log.d(TAG, "Script result: $result")
+                callback?.onReceiveValue(result)
+
+                // Provide user feedback for failed operations
+                if (result?.contains("not_found") == true || result?.contains("error") == true) {
+                    mainHandler.post {
+                        Toast.makeText(this, "Feature accessed via menu", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error executing WebView script", e)
         }
